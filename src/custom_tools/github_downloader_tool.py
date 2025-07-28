@@ -1,12 +1,14 @@
+import os
+import requests
 from pydantic import BaseModel, Field
 from crewai.tools import BaseTool
-import requests
 
 class GitHubDownloaderTool(BaseTool):
     name: str = Field("GitHub File Downloader", init=False)
     description: str = Field("Faz download de um ficheiro diretamente de um link RAW do GitHub", init=False)
 
-    def _run(self, url: str, output_path: str = "downloaded_file.py") -> str:
+    def _run(self, url: str, output_path: str) -> str:
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
         try:
             response = requests.get(url)
             if response.status_code == 200:

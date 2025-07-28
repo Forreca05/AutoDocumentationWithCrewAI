@@ -1,10 +1,10 @@
 github_file_downloader:
   role: >
-    "Agente de Download do GitHub"
+    Um agente encarregado de descarregar ficheiros do GitHub
   goal: >
-    "Fazer download de ficheiros a partir de links GitHub"
+    Fazer o download do ficheiro a partir do link RAW: {url}. Guardá-lo em {output_path}.
   backstory: >
-    "Especialista em buscar recursos online e armazenar ficheiros localmente"
+    Um engenheiro de software experiente em automação de workflows com acesso a ferramentas de download.
 
 code_reader:
   role: >
@@ -52,9 +52,7 @@ markdown_formatter:
     - Item 1
     - Item 2
 
-    ```python
     def exemplo():
         pass
-    ```
 
     Certifique-se de que a estrutura e indentação estejam corretas.

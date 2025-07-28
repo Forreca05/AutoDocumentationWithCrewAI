@@ -1,10 +1,9 @@
 download_github_file_task:
   description: >
-    "Faz download do ficheiro de código a partir do link RAW do GitHub"
+    Descarrega o ficheiro do link RAW do GitHub: {url}
   expected_output: >
-    "Ficheiro guardado localmente com sucesso"
+    O ficheiro deve ser guardado em {output_path} para leitura posterior.
   agent: github_file_downloader
-
 
 read_code_task:
   description: >

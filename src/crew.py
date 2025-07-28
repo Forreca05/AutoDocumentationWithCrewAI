@@ -17,24 +17,26 @@ class CodeDocumentationCrew:
     agents_config = "config/agents.yaml"
     tasks_config = "config/tasks.yaml"
 
-    """@agent
+    @agent
     def github_file_downloader(self) -> Agent:
         return Agent(
             config=self.agents_config["github_file_downloader"],
             tools=[GitHubDownloaderTool()],
             llm=my_llm,
             verbose=True,
-        )"""
+        )
     
     @agent
     def code_reader(self) -> Agent:
         return Agent(
             config=self.agents_config["code_reader"],
-            tools=[FileReadTool(file_path="downloaded_file.py")],
+            tools=[FileReadTool(file_path="{{ output_path }}",
+                                start_line=1,
+                                line_count=None)],
             llm=my_llm,
             verbose=True,
         )
-
+    
     @agent
     def code_insight_agent(self) -> Agent:
         return Agent(
@@ -59,12 +61,11 @@ class CodeDocumentationCrew:
             verbose=True,
         )
 
-    """@task
+    @task
     def download_github_file_task(self) -> Task:
         return Task(
             config=self.tasks_config["download_github_file_task"],
-            input={"url": "{{ url }}"}  # usa variável externa
-        )"""
+        )
 
     @task
     def read_code_task(self) -> Task:
