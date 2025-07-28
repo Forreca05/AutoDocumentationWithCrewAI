@@ -1,0 +1,20 @@
+# Virtual environment
+.venv/
+
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+
+# Init files (se quiser ignorar mesmo)
+__init__.py
+
+# VSCode settings (se usar)
+.vscode/
+
+# macOS system files
+.DS_Store
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+test.py
