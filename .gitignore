@@ -7,9 +7,6 @@ __pycache__/
 *.py[cod]
 *.pyo
 
-# Arquivos de inicialização (caso desejes ignorar mesmo)
-__init__.py
-
 # Diretórios e ficheiros específicos do projeto
 .vscode/
 downloads/

@@ -12,8 +12,6 @@ my_llm = LLM(
 
 @CrewBase
 class CodeDocumentationCrew:
-    """Crew especializada em gerar documentação técnica de código Python."""
-
     agents_config = "config/agents.yaml"
     tasks_config = "config/tasks.yaml"
 
@@ -30,13 +28,11 @@ class CodeDocumentationCrew:
     def code_reader(self) -> Agent:
         return Agent(
             config=self.agents_config["code_reader"],
-            tools=[FileReadTool(file_path="{{ output_path }}",
-                                start_line=1,
-                                line_count=None)],
+            tools=[FileReadTool()],
             llm=my_llm,
             verbose=True,
         )
-    
+
     @agent
     def code_insight_agent(self) -> Agent:
         return Agent(

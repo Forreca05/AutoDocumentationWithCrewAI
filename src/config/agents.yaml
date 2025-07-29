@@ -8,11 +8,11 @@ github_file_downloader:
 
 code_reader:
   role: >
-    Python Code Reader
+    Code Reader
   goal: >
-    Ler e compreender arquivos Python.
+    Ler e compreender arquivos de código.
   backstory: >
-    Você é especialista em entender código Python e explicar
+    Você é especialista em entender código e explicar
     claramente sua lógica e estrutura.
 
 code_insight_agent:

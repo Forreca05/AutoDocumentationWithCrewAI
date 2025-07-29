@@ -11,4 +11,5 @@ output_path = extract_output_path(url)
 if __name__ == "__main__":
     inputs = {"url": url,
               "output_path": output_path}
+    print(f"🪵 DEBUG: output_path = {output_path}")
     CodeDocumentationCrew().crew().kickoff(inputs=inputs)

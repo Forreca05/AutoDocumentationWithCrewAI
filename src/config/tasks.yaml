@@ -7,7 +7,7 @@ download_github_file_task:
 
 read_code_task:
   description: >
-    Leia e analise o conteúdo do arquivo Python fornecido utilizando a ferramenta apropriada.
+    Leia e analise o conteúdo do arquivo fornecido em {output_path} utilizando a ferramenta apropriada.
     Forneça um resumo textual conciso explicando a funcionalidade geral do código. Foque no
     propósito principal do script, seu fluxo lógico e quaisquer observações relevantes sobre
     seu comportamento geral.
