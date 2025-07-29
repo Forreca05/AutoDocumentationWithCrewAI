@@ -1,4 +1,14 @@
 from src.crew import CodeDocumentationCrew
+from urllib.parse import urlparse
+
+def extract_output_path(url):
+    path = urlparse(url).path
+    return "downloads" + path[path.rfind("/"):]
+
+url = "https://github.com/Forreca05/Codeforces"
+clone_dir = "requests_repo"
 
 if __name__ == "__main__":
-    CodeDocumentationCrew().crew().kickoff(inputs={"url": "https://raw.githubusercontent.com/crewAIInc/crewAI/refs/heads/main/src/crewai/agent.py"})
+    inputs = {"repo_url": url,
+              "clone_dir": clone_dir}
+    CodeDocumentationCrew().crew().kickoff(inputs=inputs)

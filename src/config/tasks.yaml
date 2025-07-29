@@ -1,32 +1,50 @@
+clone_repo_task:
+  description: >
+    Clonar o repositório fornecido no GitHub em {repo_url} para {clone_dir}.
+    Use a ferramenta de clonagem para garantir que o conteúdo esteja disponível localmente.
+  expected_output: >
+    O repositório deve ser clonado com sucesso na pasta {clone_dir}.
+  agent: repo_cloner
+
 read_code_task:
   description: >
-    Leia e analise todos os arquivos Python no diretório "./codigo".
-    Forneça um resumo textual conciso explicando a funcionalidade geral do código de cada ficheiro,
-    destacando seu propósito principal e estrutura geral.
+    Leia e analise o conteúdo do arquivo fornecido em {clone_dir} utilizando a ferramenta apropriada.
+    Forneça um resumo textual conciso explicando a funcionalidade geral do código. Foque no
+    propósito principal do script, seu fluxo lógico e quaisquer observações relevantes sobre
+    seu comportamento geral.
   expected_output: >
-    Um resumo em linguagem natural para programadores, explicando o que cada ficheiro faz de forma clara.
+    Um resumo textual explicando de forma clara e objetiva o que o código realiza de maneira
+    geral, em linguagem natural e acessível para programadores.
   agent: code_reader
 
 extract_insights_task:
   description: >
-    A partir do resumo gerado, identifique e liste todas as funções, classes e estruturas principais.
-    Para cada item, forneça uma breve explicação do seu papel dentro do sistema e como ele se relaciona com os demais.
+    A partir do resumo do código gerado anteriormente, identifique e liste todas as funções,
+    classes e estruturas principais presentes no arquivo. Para cada item, forneça uma breve
+    explicação do seu papel dentro do sistema e como ele se relaciona com o restante do código.
   expected_output: >
-    Lista em bullet points com funções, classes e seus papéis explicados.
+    Uma lista em bullet points contendo os nomes das funções, classes e estruturas identificadas,
+    acompanhadas de uma breve explicação sobre sua finalidade e interações no código.
   agent: code_insight_agent
 
 generate_doc_task:
   description: >
-    Com base nos resumos e insights, redija uma documentação técnica clara e completa.
-    A documentação deve explicar como o sistema funciona e como pode ser usado.
+    Com base no resumo e nos insights extraídos do código, redija a documentação técnica
+    completa do arquivo `task_manager.py`. Utilize uma linguagem clara, formal e objetiva,
+    explicando como o código funciona e como deve ser utilizado por outros desenvolvedores.
   expected_output: >
-    Documento técnico explicando estrutura, uso e dependências do código Python analisado.
+    Documentação técnica completa descrevendo a estrutura, funcionamento, uso e dependências
+    do código analisado, adequada para inclusão em um repositório de projeto.
   agent: doc_writer
 
 markdown_format_task:
   description: >
-    Formate a documentação técnica gerada anteriormente usando Markdown.
-    Use títulos, listas, blocos de código e boa estrutura visual.
+    Formate a documentação técnica gerada anteriormente usando Markdown corretamente.
+    Aplique cabeçalhos, listas, blocos de código e outros elementos visuais conforme necessário
+    para garantir uma apresentação clara, legível e pronta para ser publicada em repositórios,
+    wikis ou sites.
   expected_output: >
-    Documentação bem formatada em Markdown, pronta para uso em repositórios.
+    A documentação anterior, convertida e formatada adequadamente em Markdown. Deve conter
+    estrutura hierárquica com títulos, subtítulos, listas organizadas e blocos de código bem
+    identados.
   agent: markdown_formatter

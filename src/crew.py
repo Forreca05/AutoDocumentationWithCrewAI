@@ -18,12 +18,19 @@ class CodeDocumentationCrew:
     tasks_config = "config/tasks.yaml"
 
     @agent
+    def repo_cloner(self) -> Agent:
+        return Agent(
+            config=self.agents_config["repo_cloner"],
+            tools=[GitHubDownloaderTool()],
+            llm=my_llm,
+            verbose=True,
+        )
+
+    @agent
     def code_reader(self) -> Agent:
         return Agent(
             config=self.agents_config["code_reader"],
-            tools=[
-                DirectoryReadTool(directory="./codigo")  # Novo: lê todos os .py da pasta
-            ],
+            tools=[DirectoryReadTool(directory="./requests_repo")],
             llm=my_llm,
             verbose=True,
         )
@@ -51,6 +58,10 @@ class CodeDocumentationCrew:
             llm=my_llm,
             verbose=True,
         )
+
+    @task
+    def clone_repo_task(self) -> Task:
+        return Task(config=self.tasks_config["clone_repo_task"])
 
     @task
     def read_code_task(self) -> Task:
