@@ -1,7 +1,0 @@
-py -3.11 -m venv .venv
-.\.venv\Scripts\activate
-
-
-
-Quanto maiores os modelos melhor é a documentação mas mais crasham inesperadamente.  Por vezes, a documentação gereada não é correta.
-Às vezes funcionam, outras vezes não.
