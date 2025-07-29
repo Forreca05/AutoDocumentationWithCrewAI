@@ -1,11 +1,3 @@
-github_file_downloader:
-  role: >
-    "Agente de Download do GitHub"
-  goal: >
-    "Fazer download de ficheiros a partir de links GitHub"
-  backstory: >
-    "Especialista em buscar recursos online e armazenar ficheiros localmente"
-
 code_reader:
   role: >
     Python Code Reader
@@ -43,18 +35,4 @@ markdown_formatter:
   backstory: >
     Você é especialista em Markdown. Seu trabalho é garantir que
     a documentação fique limpa, organizada e pronta para uso em
-    repositórios. Utilize o seguinte estilo de formatação:
-    
-    # Título
-
-    ## Subtítulo
-
-    - Item 1
-    - Item 2
-
-    ```python
-    def exemplo():
-        pass
-    ```
-
-    Certifique-se de que a estrutura e indentação estejam corretas.
+    repositórios.

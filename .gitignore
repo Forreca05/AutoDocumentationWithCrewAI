@@ -14,6 +14,7 @@ filestotest/
 test.py
 documentacao_final.md
 notes
+requests_repo
 
 # Checkpoints Jupyter
 .ipynb_checkpoints/

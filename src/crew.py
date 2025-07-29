@@ -1,9 +1,9 @@
 from crewai import Agent, Crew, Process, Task, LLM
 from crewai.project import CrewBase, agent, crew, task
-from crewai_tools import FileReadTool
-from .custom_tools.github_downloader_tool import GitHubDownloaderTool
+from crewai_tools import FileReadTool, DirectoryReadTool
+from .custom_tools.github_repo_cloner_tool import GitHubDownloaderTool
 
-# LLM local (ex: LM Studio com llama-3)
+# LLM local (ex: LM Studio com LLaMA 3)
 my_llm = LLM(
     model="lm_studio/google/gemma-3n-e4b",
     base_url="http://127.0.0.1:1234/v1",
@@ -17,20 +17,13 @@ class CodeDocumentationCrew:
     agents_config = "config/agents.yaml"
     tasks_config = "config/tasks.yaml"
 
-    """@agent
-    def github_file_downloader(self) -> Agent:
-        return Agent(
-            config=self.agents_config["github_file_downloader"],
-            tools=[GitHubDownloaderTool()],
-            llm=my_llm,
-            verbose=True,
-        )"""
-    
     @agent
     def code_reader(self) -> Agent:
         return Agent(
             config=self.agents_config["code_reader"],
-            tools=[FileReadTool(file_path="downloaded_file.py")],
+            tools=[
+                DirectoryReadTool(directory="./codigo")  # Novo: lê todos os .py da pasta
+            ],
             llm=my_llm,
             verbose=True,
         )
@@ -58,13 +51,6 @@ class CodeDocumentationCrew:
             llm=my_llm,
             verbose=True,
         )
-
-    """@task
-    def download_github_file_task(self) -> Task:
-        return Task(
-            config=self.tasks_config["download_github_file_task"],
-            input={"url": "{{ url }}"}  # usa variável externa
-        )"""
 
     @task
     def read_code_task(self) -> Task:
