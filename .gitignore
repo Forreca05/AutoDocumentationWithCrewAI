@@ -1,20 +1,27 @@
-# Virtual environment
+# Ambiente virtual
 .venv/
 
-# Byte-compiled / cache
+# Caches e compilados Python
 __pycache__/
+**/__pycache__/
 *.py[cod]
+*.pyo
 
-# Init files (se quiser ignorar mesmo)
-__init__.py
-
-# VSCode settings (se usar)
+# Diretórios e ficheiros específicos do projeto
 .vscode/
+downloads/
+filestotest/
+test.py
+documentacao_final.md
+notes
 
-# macOS system files
-.DS_Store
-
-# Jupyter Notebook checkpoints
+# Checkpoints Jupyter
 .ipynb_checkpoints/
 
-test.py
+# Ficheiros do sistema
+.DS_Store
+
+# Outros possíveis caches
+*.log
+*.tmp
+*.swp
