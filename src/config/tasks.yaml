@@ -1,62 +1,59 @@
-clone_repo_task:
+download_github_file_task:
   description: >
-    Clonar o repositório fornecido no GitHub em {repo_url} para {clone_dir}.
-    Use a ferramenta de clonagem para garantir que o conteúdo esteja disponível localmente.
+    Baixe um único arquivo de código diretamente a partir de um link RAW do GitHub ({url}) 
+    e salve-o no caminho local especificado ({output_path}) para análise posterior.
   expected_output: >
-    O repositório deve ser clonado com sucesso na pasta {clone_dir}.
-  agent: repo_cloner
-
-read_code_task:
-  description: >
-    Leia e analise o conteúdo somente dos arquivos presentes na pasta {clone_dir}, 
-    ignorando arquivos e diretórios relacionados ao Git, como a pasta `.git` e tudo o que não seja código. 
-    Forneça um resumo textual conciso que explique a funcionalidade geral do código, 
-    focando no propósito principal dos scripts, no fluxo lógico e em observações relevantes 
-    sobre seu comportamento geral.
-    Descarrega o ficheiro do link RAW do GitHub: {url}
-  expected_output: >
-    O ficheiro deve ser guardado em {output_path} para leitura posterior.
+    O arquivo deve ser baixado com sucesso e salvo em {output_path}, pronto para leitura e análise.
   agent: github_file_downloader
 
-read_code_task:
+clone_repo_task:
   description: >
-    Leia e analise o conteúdo do arquivo fornecido em {output_path} utilizando a ferramenta apropriada.
-    Forneça um resumo textual conciso explicando a funcionalidade geral do código. Foque no
-    propósito principal do script, seu fluxo lógico e quaisquer observações relevantes sobre
-    seu comportamento geral.
+    Clonar o repositório GitHub localizado em {repo_url} e salvá-lo localmente no diretório {clone_dir}.
+    A operação deve garantir que todo o conteúdo relevante do repositório esteja disponível para análise.
   expected_output: >
-    Um resumo claro e objetivo que explique, em linguagem natural e acessível para programadores, 
-    o que o código realiza de maneira geral.
-  agent: code_reader
+    O repositório é clonado corretamente no caminho {clone_dir}, com todos os arquivos acessíveis.
+  agent: repo_cloner
+
+read_file_task:
+  description: >
+    Analise o conteúdo de um arquivo de código salvo em {output_path}. 
+    Gere um resumo textual que descreva sua funcionalidade, estrutura lógica, 
+    e observações relevantes sobre seu comportamento.
+  expected_output: >
+    Um resumo descritivo, objetivo e compreensível da lógica do arquivo localizado em {output_path}.
+  agent: file_reader
+
+read_directory_task:
+  description: >
+    Varra todos os arquivos de código no diretório clonado em {clone_dir}, ignorando pastas irrelevantes 
+    como `.git` e arquivos que não contenham código-fonte. Analise cada arquivo e sintetize os 
+    propósitos principais dos componentes do projeto.
+  expected_output: >
+    Um resumo técnico da estrutura geral do projeto contido em {clone_dir}, com destaques das principais partes do código.
+  agent: directory_reader
 
 extract_insights_task:
   description: >
-    A partir do resumo do código gerado anteriormente, identifique e liste todas as funções,
-    classes e estruturas principais presentes no arquivo. Para cada item, forneça uma breve
-    explicação do seu papel dentro do sistema e como ele se relaciona com o restante do código.
+    A partir do código analisado, extraia todas as funções, classes, métodos ou blocos lógicos principais.
+    Para cada item, forneça uma explicação curta sobre sua finalidade e como se relaciona com os demais.
   expected_output: >
-    Uma lista em bullet points contendo os nomes das funções, classes e estruturas identificadas,
-    acompanhadas de uma breve explicação sobre sua finalidade e interações no código.
+    Uma lista de componentes principais (funções, classes, etc.), acompanhada de explicações sucintas 
+    sobre seu papel no código.
   agent: code_insight_agent
 
 generate_doc_task:
   description: >
-    Com base no resumo e nos insights extraídos do código, redija a documentação técnica
-    completa do arquivo `task_manager.py`. Utilize uma linguagem clara, formal e objetiva,
-    explicando como o código funciona e como deve ser utilizado por outros desenvolvedores.
+    Escreva a documentação técnica completa do código com base no resumo e nos insights extraídos.
+    Explique a estrutura, funcionamento, dependências e uso geral, visando facilitar a manutenção 
+    e compreensão por outros desenvolvedores.
   expected_output: >
-    Documentação técnica completa descrevendo a estrutura, funcionamento, uso e dependências
-    do código analisado, adequada para inclusão em um repositório de projeto.
+    Um documento técnico detalhado e bem estruturado, pronto para ser incluído no repositório do projeto.
   agent: doc_writer
 
 markdown_format_task:
   description: >
-    Formate a documentação técnica gerada anteriormente usando Markdown corretamente.
-    Aplique cabeçalhos, listas, blocos de código e outros elementos visuais conforme necessário
-    para garantir uma apresentação clara, legível e pronta para ser publicada em repositórios,
-    wikis ou sites.
+    Formate a documentação gerada usando sintaxe Markdown. Aplique cabeçalhos, listas, blocos de código 
+    e organização hierárquica, garantindo clareza e legibilidade da apresentação final.
   expected_output: >
-    A documentação anterior, convertida e formatada adequadamente em Markdown. Deve conter
-    estrutura hierárquica com títulos, subtítulos, listas organizadas e blocos de código bem
-    identados.
+    A documentação convertida para Markdown, formatada com estilo limpo, estruturado e pronta para publicação.
   agent: markdown_formatter
