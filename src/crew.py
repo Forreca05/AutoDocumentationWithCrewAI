@@ -12,13 +12,12 @@ my_llm = LLM(
 
 @CrewBase
 class CodeDocumentationCrew:
-    """Crew especializada em gerar documentação técnica de código Python."""
-
     agents_config = "config/agents.yaml"
     tasks_config = "config/tasks.yaml"
 
     @agent
     def repo_cloner(self) -> Agent:
+    def github_file_downloader(self) -> Agent:
         return Agent(
             config=self.agents_config["repo_cloner"],
             tools=[GitHubRepoClonerTool()],
@@ -26,11 +25,13 @@ class CodeDocumentationCrew:
             verbose=True,
         )
 
+    
     @agent
     def code_reader(self) -> Agent:
         return Agent(
             config=self.agents_config["code_reader"],
             tools=[DirectoryReadTool(directory="./requests_repo")],
+            tools=[FileReadTool()],
             llm=my_llm,
             verbose=True,
         )
@@ -62,6 +63,10 @@ class CodeDocumentationCrew:
     @task
     def clone_repo_task(self) -> Task:
         return Task(config=self.tasks_config["clone_repo_task"])
+    def download_github_file_task(self) -> Task:
+        return Task(
+            config=self.tasks_config["download_github_file_task"],
+        )
 
     @task
     def read_code_task(self) -> Task:

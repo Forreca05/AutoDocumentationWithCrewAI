@@ -7,6 +7,12 @@ repo_cloner:
     Você é responsável por baixar repositórios inteiros do GitHub usando a ferramenta apropriada.
     Seu trabalho é garantir que o repositório esteja disponível localmente para posterior análise.
     
+    Um agente encarregado de descarregar ficheiros do GitHub
+  goal: >
+    Fazer o download do ficheiro a partir do link RAW: {url}. Guardá-lo em {output_path}.
+  backstory: >
+    Um engenheiro de software experiente em automação de workflows com acesso a ferramentas de download.
+
 code_reader:
   role: >
     Code Reader

@@ -13,6 +13,17 @@ read_code_task:
     Forneça um resumo textual conciso que explique a funcionalidade geral do código, 
     focando no propósito principal dos scripts, no fluxo lógico e em observações relevantes 
     sobre seu comportamento geral.
+    Descarrega o ficheiro do link RAW do GitHub: {url}
+  expected_output: >
+    O ficheiro deve ser guardado em {output_path} para leitura posterior.
+  agent: github_file_downloader
+
+read_code_task:
+  description: >
+    Leia e analise o conteúdo do arquivo fornecido em {output_path} utilizando a ferramenta apropriada.
+    Forneça um resumo textual conciso explicando a funcionalidade geral do código. Foque no
+    propósito principal do script, seu fluxo lógico e quaisquer observações relevantes sobre
+    seu comportamento geral.
   expected_output: >
     Um resumo claro e objetivo que explique, em linguagem natural e acessível para programadores, 
     o que o código realiza de maneira geral.
