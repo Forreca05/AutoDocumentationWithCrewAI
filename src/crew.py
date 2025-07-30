@@ -1,7 +1,7 @@
 from crewai import Agent, Crew, Process, Task, LLM
 from crewai.project import CrewBase, agent, crew, task
 from crewai_tools import FileReadTool, DirectoryReadTool
-from .custom_tools.github_repo_cloner_tool import GitHubDownloaderTool
+from .custom_tools.github_repo_cloner_tool import GitHubRepoClonerTool
 
 # LLM local (ex: LM Studio com LLaMA 3)
 my_llm = LLM(
@@ -21,7 +21,7 @@ class CodeDocumentationCrew:
     def repo_cloner(self) -> Agent:
         return Agent(
             config=self.agents_config["repo_cloner"],
-            tools=[GitHubDownloaderTool()],
+            tools=[GitHubRepoClonerTool()],
             llm=my_llm,
             verbose=True,
         )
