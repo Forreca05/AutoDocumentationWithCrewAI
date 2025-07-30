@@ -5,7 +5,7 @@ def extract_output_path(url):
     path = urlparse(url).path
     return "downloads" + path[path.rfind("/"):]
 
-url = "https://github.com/Forreca05/Codeforces"
+url = "https://github.com/Forreca05/Autonomous-Documentation"
 clone_dir = "requests_repo"
 
 if __name__ == "__main__":

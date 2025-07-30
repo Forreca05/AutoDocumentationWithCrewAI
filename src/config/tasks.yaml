@@ -8,13 +8,14 @@ clone_repo_task:
 
 read_code_task:
   description: >
-    Leia e analise o conteúdo do arquivo fornecido em {clone_dir} utilizando a ferramenta apropriada.
-    Forneça um resumo textual conciso explicando a funcionalidade geral do código. Foque no
-    propósito principal do script, seu fluxo lógico e quaisquer observações relevantes sobre
-    seu comportamento geral.
+    Leia e analise o conteúdo somente dos arquivos presentes na pasta {clone_dir}, 
+    ignorando arquivos e diretórios relacionados ao Git, como a pasta `.git` e tudo o que não seja código. 
+    Forneça um resumo textual conciso que explique a funcionalidade geral do código, 
+    focando no propósito principal dos scripts, no fluxo lógico e em observações relevantes 
+    sobre seu comportamento geral.
   expected_output: >
-    Um resumo textual explicando de forma clara e objetiva o que o código realiza de maneira
-    geral, em linguagem natural e acessível para programadores.
+    Um resumo claro e objetivo que explique, em linguagem natural e acessível para programadores, 
+    o que o código realiza de maneira geral.
   agent: code_reader
 
 extract_insights_task:
