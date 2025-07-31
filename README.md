@@ -12,6 +12,8 @@ Este projeto organiza agentes colaborativos para analisar e documentar código P
 - 🧠 Análise da estrutura do código
 - ✍️ Geração automática de documentação
 - 🤖 Execução em cadeia de agentes (Leitor → Analista → Documentador)
+- 🔄 Integração com GitHub via webhook para automação em push
+- 🌐 Exposição local com ngrok para receber webhooks externamente
 
 ---
 
@@ -20,6 +22,7 @@ Este projeto organiza agentes colaborativos para analisar e documentar código P
 - Python 3.11+
 - [CrewAI](https://github.com/joaomdmoura/crewAI)
 - Ambiente virtual recomendado (venv)
+- [ngrok](https://ngrok.com/) para expor localmente a API de webhook (opcional, para testes locais)
 
 ---
 
@@ -40,9 +43,65 @@ source .venv/bin/activate  # Para Linux/macOS
 pip install -r requirements.txt
 ```
 
-### 3. Execute o projeto
+### 3. Execute a aplicação de webhook (Flask)
+
+Este servidor escuta eventos do GitHub para iniciar a geração automática da documentação quando um push ocorre.
+
+```bash
+py webhook_server.py
+```
+
+O servidor vai rodar localmente na porta 5000 (http://localhost:5000/webhook).
+
+### 4. Exponha localmente com ngrok (para receber webhooks do GitHub)
+
+Se quiser testar localmente, você pode usar o ngrok para criar um túnel HTTP:
+
+```bash
+ngrok http 5000
+```
+
+- Copie a URL pública gerada pelo ngrok, algo como https://abcd1234.ngrok.io
+
+- Configure essa URL como webhook no repositório GitHub, adicionando /webhook no final (ex: https://abcd1234.ngrok.io/webhook)
+
+### 5. Configure o webhook no GitHub
+
+- Vá em **Settings** → **Webhooks** no seu repositório GitHub
+- Clique em **Add webhook**
+- Cole a URL do ngrok com `/webhook`
+- Escolha o conteúdo do tipo `application/json`
+- Selecione os eventos que quer ouvir, por exemplo, **push**
+- Salve o webhook
+
+### 6. O que acontece quando o webhook é acionado?
+
+Quando um push é detectado, o webhook envia uma requisição POST para seu servidor Flask. Ele:
+
+- Extrai a URL do repositório do payload
+- Inicia em background a geração automática da documentação chamando `main.py` com parâmetros
+- Retorna uma resposta de confirmação
+
+### Como rodar o projeto manualmente
+
+Se quiser rodar sem webhook, pode executar diretamente o script principal:
 
 ```bash
 py main.py
 ```
 
+### Estrutura do projeto
+
+- main.py - Script principal para geração da documentação
+
+- webhook_server.py - Servidor Flask para receber eventos do GitHub
+
+- tools/ - Ferramentas personalizadas para clonagem, download e leitura de código
+
+- agents/ - Configuração dos agentes CrewAI
+
+- config/ - Arquivos YAML com configurações dos agentes e tarefas
+
+ 
+ 
+ 
