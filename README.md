@@ -26,6 +26,14 @@ Este projeto organiza agentes colaborativos para analisar e documentar código P
 
 ---
 
+## 🧠 Modelos de Linguagem
+
+Este projeto utiliza um modelo de linguagem local através do [LM Studio](https://lmstudio.ai/). Isso permite processamento e geração de texto de forma offline, garantindo maior controle e privacidade durante a análise e documentação automática do código e evita a necessidade de ter uma API key.
+
+---
+
+---
+
 ## ⚙️ Instalação e uso
 
 ### 1. Crie e ative o ambiente virtual:
