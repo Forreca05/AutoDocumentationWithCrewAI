@@ -13,17 +13,16 @@ class GitHubRepoClonerTool(BaseTool):
     )
 
     def _on_rm_error(self, func, path, exc_info):
-        # Tenta remover permissão de só leitura e apaga de novo
         os.chmod(path, stat.S_IWRITE)
         func(path)
 
-    def _run(self, repo_url: str, clone_dir: str) -> str:
+    def _run(self, repo_url: str, clone_dir: str, branch: str = "main") -> str:
         try:
             if os.path.exists(clone_dir):
                 shutil.rmtree(clone_dir, onerror=self._on_rm_error)
 
-            subprocess.run(["git", "clone", repo_url, clone_dir], check=True)
-            return f"✅ Repositório clonado com sucesso em '{clone_dir}'."
+            subprocess.run(["git", "clone", "--branch", branch, repo_url, clone_dir], check=True)
+            return f"✅ Repositório clonado com sucesso em '{clone_dir}' (branch: {branch})."
 
         except subprocess.CalledProcessError as e:
             return f"❌ Erro ao executar comando Git: {str(e)}"

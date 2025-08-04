@@ -12,7 +12,7 @@ Este projeto organiza agentes colaborativos para analisar e documentar código P
 - 🧠 Análise da estrutura do código
 - ✍️ Geração automática de documentação
 - 🤖 Execução em cadeia de agentes (Leitor → Analista → Documentador)
-- 🔄 Integração com GitHub via webhook para automação em push
+- 🔄 Integração com GitHub via webhook para automação em push ou pull request
 - 🌐 Exposição local com ngrok para receber webhooks externamente
 
 ---
@@ -29,8 +29,6 @@ Este projeto organiza agentes colaborativos para analisar e documentar código P
 ## 🧠 Modelos de Linguagem
 
 Este projeto utiliza um modelo de linguagem local através do [LM Studio](https://lmstudio.ai/). Isso permite processamento e geração de texto de forma offline, garantindo maior controle e privacidade durante a análise e documentação automática do código e evita a necessidade de ter uma API key.
-
----
 
 ---
 

@@ -3,6 +3,7 @@ from crewai.project import CrewBase, agent, crew, task
 from crewai_tools import FileReadTool, DirectoryReadTool
 from .custom_tools.github_repo_cloner_tool import GitHubRepoClonerTool
 from .custom_tools.github_downloader_tool import GitHubDownloaderTool
+from .custom_tools.filtered_directory_reader_tool import FilteredDirectoryReaderTool
 
 my_llm = LLM(
     model="lm_studio/google/gemma-3n-e4b",
@@ -37,6 +38,15 @@ class CodeDocumentationCrew:
         )
 
     @agent
+    def file_lister(self) -> Agent:
+        return Agent(
+            config=self.agents_config["file_lister"],
+            tools=[FilteredDirectoryReaderTool(directory="./requests_repo")],
+            llm=my_llm,  # usa o LLM que você definiu
+            verbose=True,
+        )
+
+    @agent
     def file_reader(self) -> Agent:
         return Agent(
             config=self.agents_config["file_reader"],
@@ -44,12 +54,11 @@ class CodeDocumentationCrew:
             llm=my_llm,
             verbose=True,
         )
-    
+
     @agent
-    def directory_reader(self) -> Agent:
+    def inline_doc_updater(self) -> Agent:
         return Agent(
-            config=self.agents_config["directory_reader"],
-            tools=[DirectoryReadTool(directory="./requests_repo")],
+            config=self.agents_config["inline_doc_updater"],
             llm=my_llm,
             verbose=True,
         )
@@ -77,7 +86,7 @@ class CodeDocumentationCrew:
             llm=my_llm,
             verbose=True,
         )
-    
+
     @task
     def download_github_file_task(self) -> Task:
         return Task(config=self.tasks_config["download_github_file_task"])
@@ -87,13 +96,17 @@ class CodeDocumentationCrew:
         return Task(config=self.tasks_config["clone_repo_task"])
 
     @task
+    def list_code_files_task(self) -> Task:
+        return Task(config=self.tasks_config["list_files_task"])
+
+    @task
     def read_file_task(self) -> Task:
         return Task(config=self.tasks_config["read_file_task"])
-    
+
     @task
-    def read_directory_task(self) -> Task:
-        return Task(config=self.tasks_config["read_directory_task"])
-    
+    def update_inline_docs_task(self) -> Task:
+        return Task(config=self.tasks_config["update_inline_docs_task"])
+
     @task
     def extract_insights_task(self) -> Task:
         return Task(config=self.tasks_config["extract_insights_task"])
@@ -115,6 +128,7 @@ class CodeDocumentationCrew:
             agents = [
                 self.github_file_downloader(),
                 self.file_reader(),
+                self.inline_doc_updater(),
                 self.code_insight_agent(),
                 self.doc_writer(),
                 self.markdown_formatter()
@@ -122,6 +136,7 @@ class CodeDocumentationCrew:
             tasks = [
                 self.download_github_file_task(),
                 self.read_file_task(),
+                self.update_inline_docs_task(),
                 self.extract_insights_task(),
                 self.generate_doc_task(),
                 self.markdown_format_task()
@@ -129,14 +144,18 @@ class CodeDocumentationCrew:
         elif self.method == "clone_repo":
             agents = [
                 self.repo_cloner(),
-                self.directory_reader(),
+                self.file_lister(),
+                self.file_reader(),
+                self.inline_doc_updater(),
                 self.code_insight_agent(),
                 self.doc_writer(),
                 self.markdown_formatter()
             ]
             tasks = [
                 self.clone_repo_task(),
-                self.read_directory_task(),
+                self.list_code_files_task(),
+                self.read_file_task(),
+                self.update_inline_docs_task(),
                 self.extract_insights_task(),
                 self.generate_doc_task(),
                 self.markdown_format_task()

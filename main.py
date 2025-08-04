@@ -8,7 +8,7 @@ def extract_output_path(url):
 
 def main(method=None, inputs=None):
     if method is None or inputs is None:
-        # Modo interativo original (input)
+        # Modo interativo original
         print("\n📄 Como preferes gerar a documentação do teu código?\n")
         print("  1️⃣  Usar o link RAW direto do GitHub (arquivo único)")
         print("  2️⃣  Clonar um repositório completo\n")
@@ -25,35 +25,39 @@ def main(method=None, inputs=None):
             }
         elif choice == "2":
             repo_url = input("\n📎 Cola o link do repositório GitHub: ").strip()
+            branch = (input("🌿 Nome da branch (default: main): ") or "").strip() or "main"
             method = "clone_repo"
             inputs = {
                 "repo_url": repo_url,
-                "clone_dir": "requests_repo"
+                "clone_dir": "requests_repo",
+                "branch": branch
             }
         else:
             print("\n❌ Opção inválida. Usa 1 ou 2.")
             exit(1)
 
-    # Executa a crew
     crew = CodeDocumentationCrew(method=method).crew()
     crew.kickoff(inputs=inputs)
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        # exemplo: python main.py clone_repo https://github.com/usuario/repositorio.git
+    if len(sys.argv) > 2:
         method = sys.argv[1]
         if method == "raw_link":
+            url = sys.argv[2]
             inputs = {
-                "url": sys.argv[2],
-                "output_path": extract_output_path(sys.argv[2])
+                "url": url,
+                "output_path": extract_output_path(url)
             }
         elif method == "clone_repo":
+            repo_url = sys.argv[2]
+            branch = sys.argv[3] if len(sys.argv) > 3 else "main"
             inputs = {
-                "repo_url": sys.argv[2],
-                "clone_dir": "requests_repo"
+                "repo_url": repo_url,
+                "clone_dir": "requests_repo",
+                "branch": branch
             }
         else:
-            print("Método inválido.")
+            print("Método inválido. Usa 'raw_link' ou 'clone_repo'.")
             sys.exit(1)
         main(method, inputs)
     else:
