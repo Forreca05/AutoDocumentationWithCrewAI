@@ -1,14 +1,21 @@
-from crewai import Agent, Crew, Process, Task, LLM
-from crewai.project import CrewBase, agent, crew, task
-from crewai_tools import FileReadTool, DirectoryReadTool
-from .custom_tools.github_repo_cloner_tool import GitHubRepoClonerTool
-from .custom_tools.github_downloader_tool import GitHubDownloaderTool
-from .custom_tools.filtered_directory_reader_tool import FilteredDirectoryReaderTool
+from crewai import Agent, Crew, Task, Process, LLM
+from crewai.project import CrewBase, agent, task, crew
 
+# Imports de ferramentas personalizadas usadas pelos agentes
+from crewai_tools import FileReadTool
+from .custom_tools.github_downloader_tool import GitHubDownloaderTool
+from .custom_tools.github_repo_cloner_tool import GitHubRepoClonerTool
+from .custom_tools.filtered_directory_reader_tool import FilteredDirectoryReaderTool
+from .custom_tools.real_file_path_verifier_tool import RealFilePathVerifierTool
+from .custom_tools.list_file_loader_tool import LoadFileListTool
+from .custom_tools.read_file_tool import ReadFileTool
+from .custom_tools.write_to_file_tool import WriteToFileTool
+
+# Configuração do modelo de linguagem (LLM) que será usado pelos agentes
 my_llm = LLM(
     model="lm_studio/google/gemma-3n-e4b",
-    base_url="http://127.0.0.1:1234/v1",
-    api_key="dummy-key"
+    base_url="http://localhost:1234/v1",
+    api_key="not-needed"
 )
 
 @CrewBase
@@ -17,7 +24,9 @@ class CodeDocumentationCrew:
     tasks_config = "config/tasks.yaml"
 
     def __init__(self, method: str):
-        self.method = method  # "raw_link" ou "clone_repo"
+        self.method = method  # Pode ser "raw_link" para baixar arquivo ou "clone_repo" para clonar repositório
+
+    # Definição dos agentes - cada um com ferramentas e configuração específicas
 
     @agent
     def github_file_downloader(self) -> Agent:
@@ -42,26 +51,41 @@ class CodeDocumentationCrew:
         return Agent(
             config=self.agents_config["file_lister"],
             tools=[FilteredDirectoryReaderTool(directory="./requests_repo")],
-            llm=my_llm,  # usa o LLM que você definiu
-            verbose=True,
-        )
-
-    @agent
-    def file_reader(self) -> Agent:
-        return Agent(
-            config=self.agents_config["file_reader"],
-            tools=[FileReadTool()],
             llm=my_llm,
             verbose=True,
         )
 
+    #@agent
+    #def real_file_verifier(self) -> Agent:
+     #   return Agent(
+      #      config=self.agents_config["real_file_verifier"],
+       #     tools=[RealFilePathVerifierTool()],
+        #    llm=my_llm,
+         #   verbose=True,
+        #)
+
     @agent
-    def inline_doc_updater(self) -> Agent:
+    def file_content_reader(self) -> Agent:
         return Agent(
-            config=self.agents_config["inline_doc_updater"],
+            config=self.agents_config["file_content_reader"],
+            tools=[ReadFileTool()],
             llm=my_llm,
             verbose=True,
         )
+
+    """ 
+    Comentado por enquanto para testar o pipeline sem atualização inline de documentação.
+    Isso pode ajudar a verificar se o processo geral funciona sem a parte de modificação de código,
+    o que é útil para depuração ou para usar apenas análise e geração de documentação externa.
+    """
+    # @agent
+    # def inline_doc_updater(self) -> Agent:
+    #     return Agent(
+    #         config=self.agents_config["inline_doc_updater"],
+    #         tools=[WriteToFileTool()],
+    #         llm=my_llm,
+    #         verbose=True,
+    #     )
 
     @agent
     def code_insight_agent(self) -> Agent:
@@ -87,6 +111,8 @@ class CodeDocumentationCrew:
             verbose=True,
         )
 
+    # Definição das tarefas relacionadas aos agentes acima
+
     @task
     def download_github_file_task(self) -> Task:
         return Task(config=self.tasks_config["download_github_file_task"])
@@ -96,16 +122,24 @@ class CodeDocumentationCrew:
         return Task(config=self.tasks_config["clone_repo_task"])
 
     @task
-    def list_code_files_task(self) -> Task:
+    def list_files_task(self) -> Task:
         return Task(config=self.tasks_config["list_files_task"])
 
-    @task
-    def read_file_task(self) -> Task:
-        return Task(config=self.tasks_config["read_file_task"])
+    #@task
+    #def verify_files_exist_task(self) -> Task:
+     #   return Task(config=self.tasks_config["verify_files_exist_task"])
 
     @task
-    def update_inline_docs_task(self) -> Task:
-        return Task(config=self.tasks_config["update_inline_docs_task"])
+    def read_file_contents_task(self) -> Task:
+        return Task(config=self.tasks_config["read_file_contents_task"])
+
+    """
+    Também comentado para testar fluxo sem alterar arquivos,
+    para ver se a análise e documentação funcionam sozinhas, sem reescrever o código.
+    """
+    # @task
+    # def update_inline_docs_task(self) -> Task:
+    #     return Task(config=self.tasks_config["update_inline_docs_task"])
 
     @task
     def extract_insights_task(self) -> Task:
@@ -122,21 +156,23 @@ class CodeDocumentationCrew:
             output_file="documentacao_final.md"
         )
 
+    # Define a crew (pipeline de execução) baseado no método escolhido
     @crew
     def crew(self) -> Crew:
         if self.method == "raw_link":
             agents = [
                 self.github_file_downloader(),
-                self.file_reader(),
-                self.inline_doc_updater(),
+                self.file_content_reader(),
+                # Inline doc updater está comentado aqui também, para testar fluxo sem editar arquivos
+                # self.inline_doc_updater(),
                 self.code_insight_agent(),
                 self.doc_writer(),
                 self.markdown_formatter()
             ]
             tasks = [
                 self.download_github_file_task(),
-                self.read_file_task(),
-                self.update_inline_docs_task(),
+                self.read_file_contents_task(),
+                # self.update_inline_docs_task(),
                 self.extract_insights_task(),
                 self.generate_doc_task(),
                 self.markdown_format_task()
@@ -145,24 +181,28 @@ class CodeDocumentationCrew:
             agents = [
                 self.repo_cloner(),
                 self.file_lister(),
-                self.file_reader(),
-                self.inline_doc_updater(),
+                #self.real_file_verifier(),
+                self.file_content_reader(),
+                # Inline doc updater ativado aqui está comentado para testes
+                # self.inline_doc_updater(),
                 self.code_insight_agent(),
                 self.doc_writer(),
                 self.markdown_formatter()
             ]
             tasks = [
                 self.clone_repo_task(),
-                self.list_code_files_task(),
-                self.read_file_task(),
-                self.update_inline_docs_task(),
+                self.list_files_task(),
+                #self.verify_files_exist_task(),
+                self.read_file_contents_task(),
+                # self.update_inline_docs_task(),
                 self.extract_insights_task(),
                 self.generate_doc_task(),
                 self.markdown_format_task()
             ]
         else:
-            raise ValueError("Método inválido. Usa 'raw_link' ou 'clone_repo'.")
+            raise ValueError("Método inválido. Use 'raw_link' ou 'clone_repo'.")
 
+        # Retorna o pipeline de execução sequencial com agentes e tarefas configuradas
         return Crew(
             agents=agents,
             tasks=tasks,

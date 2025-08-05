@@ -96,18 +96,29 @@ Se quiser rodar sem webhook, pode executar diretamente o script principal:
 py main.py
 ```
 
-### Estrutura do projeto
+## 📁 Estrutura do projeto
 
-- main.py - Script principal para geração da documentação
+- `main.py` — Script principal para geração da documentação.
+- `webhook_server.py` — Servidor Flask para receber eventos do GitHub.
+- `src/custom_tools/` — Ferramentas personalizadas para clonagem, download e leitura de código.
+- `src/config/` — Arquivos YAML com configurações dos agentes e tarefas.
 
-- webhook_server.py - Servidor Flask para receber eventos do GitHub
 
-- tools/ - Ferramentas personalizadas para clonagem, download e leitura de código
+ ## ❗ Limitações conhecidas
 
-- agents/ - Configuração dos agentes CrewAI
+Como este projeto utiliza um modelo de linguagem local via LM Studio, o que implica depender muito do hardware da máquina,algumas limitações foram observadas durante o uso:
 
-- config/ - Arquivos YAML com configurações dos agentes e tarefas
+- 🔁 **Comportamento instável:** Às vezes os agentes funcionam corretamente, outras vezes não. Há bastante oscilação na performance.
 
- 
+- 📄 **Documentação incorreta ou inventada:** O modelo pode gerar documentação para ficheiros que não existem ou ignorar o output real das tools, acrescentando itens fictícios.
+
+- 🧠 **Alucinações frequentes:** Devido à complexidade lógica e ao número de agentes, o modelo tende a alucinar com frequência, especialmente quando o número de tokens fica próximo do limite.
+
+- ❌ **Não segue corretamente as instruções das tools:** Por exemplo, mesmo quando um ficheiro `.txt` indica quais ficheiros devem ser documentados, o modelo ignora e inventa outros.
+
+- ✍️ **Falta de documentação inline:** Mesmo com tentativas de forçar documentação inline nos métodos/funções, os resultados são inconsistentes ou inexistentes.
+
+- 💥 **Crashes inesperados:** Modelos maiores tendem a gerar mais falhas de execução locais, principalmente por gestão de memória ou limite de contexto.
+
  
  
