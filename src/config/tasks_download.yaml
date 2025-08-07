@@ -1,0 +1,35 @@
+download_github_file_task:
+  description: >
+    Baixe um único arquivo de código diretamente do link RAW do GitHub.
+  expected_output: >
+    O arquivo salvo em {output_path}.
+  agent: github_file_downloader
+
+clone_repo_task:
+  description: >
+    Clonar o repositório do GitHub para o diretório local.
+  expected_output: >
+    O repositório clonado no diretório {clone_dir}.
+  agent: repo_cloner
+
+list_files_task:
+  description: >
+    Listar ficheiros do repositório clonado.
+  expected_output: >
+    Retorna os ficheiros listados em {output_file}.
+  agent: file_lister
+
+read_file_contents_task:
+  description: >
+    Ler o ficheiro {list_file_path}, que contém caminhos para ficheiros de código (um por linha).
+    Para cada caminho listado:
+      - Ler o conteúdo do ficheiro correspondente.
+      - Adicionar um cabeçalho de comentário com o nome do ficheiro, no formato "# Arquivo: caminho/arquivo.py".
+    Combinar tudo em sequência, e salvar no arquivo {final_result}.
+  expected_output: >
+    O arquivo {final_result}, contendo a concatenação de todos os ficheiros listados,
+    com divisões claras usando comentários válidos (ex: "# Arquivo: ...").
+    Nenhum conteúdo deve ser inventado ou modificado — apenas leitura e escrita fiel dos ficheiros reais.
+  agent: file_content_reader
+
+

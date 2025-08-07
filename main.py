@@ -1,5 +1,5 @@
 import sys
-from src.crew import CodeDocumentationCrew
+from src.crew import DownloadAndExtractCrew, DocumentationCrew
 from urllib.parse import urlparse
 
 def extract_output_path(url):
@@ -8,7 +8,6 @@ def extract_output_path(url):
 
 def main(method=None, inputs=None):
     if method is None or inputs is None:
-        # Modo interativo original
         print("\n📄 Como preferes gerar a documentação do teu código?\n")
         print("  1️⃣  Usar o link RAW direto do GitHub (arquivo único)")
         print("  2️⃣  Clonar um repositório completo\n")
@@ -21,7 +20,8 @@ def main(method=None, inputs=None):
             method = "raw_link"
             inputs = {
                 "url": url,
-                "output_path": output_path
+                "output_path": output_path,
+                "final_result": output_path
             }
         elif choice == "2":
             repo_url = input("\n📎 Cola o link do repositório GitHub: ").strip()
@@ -30,14 +30,23 @@ def main(method=None, inputs=None):
             inputs = {
                 "repo_url": repo_url,
                 "clone_dir": "requests_repo",
-                "branch": branch
+                "branch": branch,
+                "output_file": "list_of_files.txt",
+                "list_file_path": "list_of_files.txt",
+                "final_result": "final.py"
             }
         else:
             print("\n❌ Opção inválida. Usa 1 ou 2.")
             exit(1)
 
-    crew = CodeDocumentationCrew(method=method).crew()
-    crew.kickoff(inputs=inputs)
+    # 1️⃣ Primeira etapa: download/clonagem + concatenação de ficheiros
+    pre_crew = DownloadAndExtractCrew(method=method).crew()
+    pre_crew.kickoff(inputs=inputs)
+
+    # 2️⃣ Segunda etapa: leitura e documentação
+    doc_crew = DocumentationCrew().crew()
+    doc_crew.kickoff()
+
 
 if __name__ == "__main__":
     if len(sys.argv) > 2:
@@ -46,7 +55,8 @@ if __name__ == "__main__":
             url = sys.argv[2]
             inputs = {
                 "url": url,
-                "output_path": extract_output_path(url)
+                "output_path": extract_output_path(url),
+                "final_result": extract_output_path(url)
             }
         elif method == "clone_repo":
             repo_url = sys.argv[2]
@@ -54,7 +64,10 @@ if __name__ == "__main__":
             inputs = {
                 "repo_url": repo_url,
                 "clone_dir": "requests_repo",
-                "branch": branch
+                "branch": branch,
+                "output_file": "list_of_files.txt",
+                "list_file_path": "list_of_files.txt",
+                "final_result": "final.py"
             }
         else:
             print("Método inválido. Usa 'raw_link' ou 'clone_repo'.")

@@ -1,0 +1,46 @@
+read_code_task:
+  description: >
+    Leia o conteúdo de um único arquivo que contém múltiplos trechos de código
+    Python, usando a ferramenta, cada um representando um arquivo diferente do projeto (marcado com
+    "# FILE: caminho/nome.py"). Analise todos os blocos e forneça um resumo geral
+    explicando a funcionalidade do projeto como um todo.
+  expected_output: >
+    Resumo textual explicando a funcionalidade geral do projeto,
+    destacando seus principais componentes e como eles trabalham juntos.
+  agent: code_reader
+
+extract_insights_task:
+  description: >
+    A partir do resumo geral do projeto, analise cada trecho de código (dividido por
+    marcações "# FILE: caminho/nome.py") e identifique as funções, classes e estruturas
+    principais de cada arquivo. Para cada item, forneça uma breve explicação sobre seu
+    papel e como ele se relaciona com os demais componentes do sistema.
+  expected_output: >
+    Uma lista em bullet points organizada por arquivo (com base nas marcações "# FILE: ..."),
+    contendo nomes das funções, classes e estruturas encontradas, acompanhadas de descrições
+    sobre sua funcionalidade e interações dentro do projeto.
+  agent: code_insight_agent
+
+generate_doc_task:
+  description: >
+    Com base no resumo geral e nos insights extraídos de cada arquivo do projeto,
+    redija a documentação técnica completa. Descreva a função de cada arquivo,
+    suas classes e funções principais, suas responsabilidades e como se relacionam
+    para compor o sistema completo.
+  expected_output: >
+    Documentação técnica detalhada do projeto, estruturada por arquivo, descrevendo
+    sua função, funcionamento interno e dependências. O texto deve ser claro,
+    técnico e pronto para desenvolvedores que queiram entender ou contribuir para o projeto.
+  agent: doc_writer
+
+markdown_format_task:
+  description: >
+    Formate a documentação técnica gerada anteriormente utilizando Markdown.
+    Crie uma seção separada para cada arquivo (com base nas marcações "# FILE: ...").
+    Utilize cabeçalhos, listas e blocos de código bem indentados, garantindo
+    uma apresentação clara e legível para inclusão em um repositório.
+  expected_output: >
+    A documentação técnica, formatada corretamente em Markdown, com seções
+    organizadas por arquivo, utilizando títulos, subtítulos, listas e blocos
+    de código para facilitar a leitura e a navegação.
+  agent: markdown_formatter
