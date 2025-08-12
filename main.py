@@ -62,7 +62,8 @@ if __name__ == "__main__":
                 "branch": branch,
                 "output_file": "list_of_files.txt",
                 "list_file_path": "list_of_files.txt",
-                "final_result": "final.py"
+                "final_result": "final.py",
+                "final_text" : "code_output.txt"
             }
         else:
             print("Método inválido. Usa 'raw_link' ou 'clone_repo'.")

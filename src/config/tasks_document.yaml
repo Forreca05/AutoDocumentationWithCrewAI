@@ -16,9 +16,12 @@ extract_insights_task:
     A partir do conteúdo lido, analisar cada trecho (dividido por marcações
     "# FILE: caminho/nome.py") e identificar funções, classes e estruturas
     principais, explicando seu papel e relação com outros componentes.
+    É fundamental que o agente baseie sua análise estritamente no conteúdo
+    fornecido, sem criar ou supor a existência de arquivos ou trechos adicionais.
   expected_output: >
     Lista em bullet points organizada por arquivo, contendo funções, classes
     e estruturas principais, com descrições de seu papel no projeto.
+    Não mencionar arquivos que não estejam presentes no conteúdo.
   agent: code_insight_agent
 
 generate_summary_task:

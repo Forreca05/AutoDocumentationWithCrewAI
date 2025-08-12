@@ -11,8 +11,14 @@ from .custom_tools.read_final_code_tool import SafeReadFileTool
 from .custom_tools.split_and_save_tool import CodeSplitterTool
 
 # Configuração do modelo de linguagem
-my_llm = LLM(
+download_llm = LLM(
     model="lm_studio/google/gemma-3n-e4b",
+    base_url="http://127.0.0.1:1234/v1",
+    api_key="not-needed"
+)
+
+document_llm = LLM(
+    model="lm_studio/google_gemma-3n-e4b-it",
     base_url="http://127.0.0.1:1234/v1",
     api_key="not-needed"
 )
@@ -33,7 +39,7 @@ class DownloadAndExtractCrew:
         return Agent(
             config=self.agents_config["github_file_downloader"],
             tools=[GitHubDownloaderTool()],
-            llm=my_llm,
+            llm=download_llm,
             verbose=True,
             allow_delegation=False
         )
@@ -43,7 +49,7 @@ class DownloadAndExtractCrew:
         return Agent(
             config=self.agents_config["repo_cloner"],
             tools=[GitHubRepoClonerTool()],
-            llm=my_llm,
+            llm=download_llm,
             verbose=True,
             allow_delegation=False
         )
@@ -53,7 +59,7 @@ class DownloadAndExtractCrew:
         return Agent(
             config=self.agents_config["file_lister"],
             tools=[FilteredDirectoryReaderTool()],
-            llm=my_llm,
+            llm=download_llm,
             verbose=True,
             allow_delegation=False
         )
@@ -63,7 +69,7 @@ class DownloadAndExtractCrew:
         return Agent(
             config=self.agents_config["file_content_reader"],
             tools=[ReadFileTool()],
-            llm=my_llm,
+            llm=download_llm,
             verbose=True,
             allow_delegation=False
         )
@@ -73,7 +79,7 @@ class DownloadAndExtractCrew:
         return Agent(
             config=self.agents_config["code_splitter_agent"],
             tools=[CodeSplitterTool()],
-            llm=my_llm,
+            llm=download_llm,
             verbose=True,
             allow_delegation=False
         )
@@ -148,7 +154,7 @@ class DocumentationCrew:
         return Agent(
             config=self.agents_config["raw_code_reader"],
             tools=[code_reader_tool_dynamic],
-            llm=my_llm,
+            llm=document_llm,
             verbose=True,
             allow_delegation=False
         )
@@ -160,7 +166,7 @@ class DocumentationCrew:
         return Agent(
             config=self.agents_config["code_reader"],
             tools=[code_reader_tool],
-            llm=my_llm,
+            llm=document_llm,
             verbose=True,
             allow_delegation=False
         )
@@ -170,7 +176,7 @@ class DocumentationCrew:
         key = "raw_code_insight_agent" if self.method == "raw_link" else "code_insight_agent"
         return Agent(
             config=self.agents_config[key],
-            llm=my_llm,
+            llm=document_llm,
             verbose=True,
             allow_delegation=False
         )
@@ -180,7 +186,7 @@ class DocumentationCrew:
         key = "raw_doc_writer" if self.method == "raw_link" else "doc_writer"
         return Agent(
             config=self.agents_config[key],
-            llm=my_llm,
+            llm=document_llm,
             verbose=True,
             allow_delegation=False
         )
@@ -190,7 +196,7 @@ class DocumentationCrew:
         key = "raw_markdown_formatter" if self.method == "raw_link" else "markdown_formatter"
         return Agent(
             config=self.agents_config[key],
-            llm=my_llm,
+            llm=document_llm,
             verbose=True,
             allow_delegation=False
         )

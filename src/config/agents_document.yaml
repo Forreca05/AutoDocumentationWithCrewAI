@@ -18,9 +18,12 @@ code_insight_agent:
   goal: >
     Analisar cada trecho de código identificado por marcações e extrair
     funções, classes e estruturas principais, descrevendo seu papel no projeto.
+    Baseie-se exclusivamente no conteúdo fornecido, sem assumir ou criar
+    arquivos ou códigos adicionais que não estejam presentes.
   backstory: >
     Você entende como diferentes arquivos interagem em um projeto Python
-    e sabe identificar os principais blocos de construção e suas conexões.
+    e sabe identificar os principais blocos de construção e suas conexões,
+    mas deve restringir sua análise ao conteúdo efetivamente recebido.
 
 doc_writer:
   role: >

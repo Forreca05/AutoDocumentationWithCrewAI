@@ -96,6 +96,18 @@ Se quiser rodar sem webhook, pode executar diretamente o script principal:
 py main.py
 ```
 
+Ao usar essa opção, você poderá escolher entre **duas formas de execução**:
+
+1. **Usar o link *raw* de um arquivo no GitHub**  
+   Basta fornecer a URL direta (*raw*) de um arquivo hospedado no GitHub.  
+   O sistema irá processar o conteúdo desse arquivo e gerar a documentação técnica para ele.
+
+2. **Clonar um repositório completo**  
+   Basta passar o link principal do repositório no GitHub, por exemplo:  
+   `https://github.com/usuario/repositorio`  
+   Em seguida, indicar a *branch* que deseja utilizar.  
+   O sistema irá clonar essa branch, processar todos os arquivos e gerar a documentação técnica do projeto completo.
+
 ## 📁 Estrutura do projeto
 
 - `main.py` — Script principal para geração da documentação.
