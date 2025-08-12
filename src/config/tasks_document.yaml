@@ -1,46 +1,89 @@
+# ---------------------------------------------------
+# Tasks para método clone_repo (múltiplos arquivos)
+# ---------------------------------------------------
+
 read_code_task:
   description: >
-    Leia o conteúdo de um único arquivo que contém múltiplos trechos de código
-    Python, usando a ferramenta, cada um representando um arquivo diferente do projeto (marcado com
-    "# FILE: caminho/nome.py"). Analise todos os blocos e forneça um resumo geral
-    explicando a funcionalidade do projeto como um todo.
+    Ler o conteúdo do arquivo indicado por {final_text}, que é um `.txt` contendo
+    todos os arquivos de um repositório GitHub previamente clonado, unidos em um só.
   expected_output: >
-    Resumo textual explicando a funcionalidade geral do projeto,
-    destacando seus principais componentes e como eles trabalham juntos.
+    O conteúdo bruto do arquivo {final_text}, exatamente como está, incluindo
+    todas as marcações "# FILE: caminho/nome.py".
   agent: code_reader
 
 extract_insights_task:
   description: >
-    A partir do resumo geral do projeto, analise cada trecho de código (dividido por
-    marcações "# FILE: caminho/nome.py") e identifique as funções, classes e estruturas
-    principais de cada arquivo. Para cada item, forneça uma breve explicação sobre seu
-    papel e como ele se relaciona com os demais componentes do sistema.
+    A partir do conteúdo lido, analisar cada trecho (dividido por marcações
+    "# FILE: caminho/nome.py") e identificar funções, classes e estruturas
+    principais, explicando seu papel e relação com outros componentes.
   expected_output: >
-    Uma lista em bullet points organizada por arquivo (com base nas marcações "# FILE: ..."),
-    contendo nomes das funções, classes e estruturas encontradas, acompanhadas de descrições
-    sobre sua funcionalidade e interações dentro do projeto.
+    Lista em bullet points organizada por arquivo, contendo funções, classes
+    e estruturas principais, com descrições de seu papel no projeto.
   agent: code_insight_agent
+
+generate_summary_task:
+  description: >
+    Usando os insights extraídos, gerar um resumo geral explicando a funcionalidade
+    do repositório clonado como um todo, destacando como os diferentes arquivos
+    e componentes trabalham juntos.
+  expected_output: >
+    Resumo claro e objetivo sobre o propósito e funcionamento geral do sistema.
+  agent: doc_writer
 
 generate_doc_task:
   description: >
-    Com base no resumo geral e nos insights extraídos de cada arquivo do projeto,
-    redija a documentação técnica completa. Descreva a função de cada arquivo,
-    suas classes e funções principais, suas responsabilidades e como se relacionam
-    para compor o sistema completo.
+    Com base no resumo geral e nos insights, redigir a documentação técnica
+    completa, descrevendo cada arquivo, suas classes e funções principais e
+    como se relacionam entre si no repositório clonado.
   expected_output: >
-    Documentação técnica detalhada do projeto, estruturada por arquivo, descrevendo
-    sua função, funcionamento interno e dependências. O texto deve ser claro,
-    técnico e pronto para desenvolvedores que queiram entender ou contribuir para o projeto.
+    Documentação técnica detalhada, estruturada por arquivo, pronta para ser
+    usada por desenvolvedores.
   agent: doc_writer
 
 markdown_format_task:
   description: >
-    Formate a documentação técnica gerada anteriormente utilizando Markdown.
-    Crie uma seção separada para cada arquivo (com base nas marcações "# FILE: ...").
-    Utilize cabeçalhos, listas e blocos de código bem indentados, garantindo
-    uma apresentação clara e legível para inclusão em um repositório.
+    Formatar a documentação técnica em Markdown, criando seções separadas por
+    arquivo e incluindo uma introdução geral sobre o repositório clonado.
   expected_output: >
-    A documentação técnica, formatada corretamente em Markdown, com seções
-    organizadas por arquivo, utilizando títulos, subtítulos, listas e blocos
-    de código para facilitar a leitura e a navegação.
+    Documentação técnica em Markdown, bem organizada, com títulos, listas e
+    blocos de código.
+  agent: markdown_formatter
+
+# ---------------------------------------------------
+# Tasks para método raw_link (arquivo único) - corrigido
+# ---------------------------------------------------
+
+read_code_task_raw_link:
+  description: >
+    Leia o conteúdo do arquivo indicado por {output_path} usando a ferramenta de leitura
+    de arquivos e gere um resumo geral explicando a funcionalidade do código como um todo.
+  expected_output: >
+    Um resumo textual explicando a funcionalidade geral do arquivo, incluindo
+    suas principais funções e classes e como elas interagem.
+  agent: raw_code_reader
+
+extract_insights_task_raw_link:
+  description: >
+    Com base no resumo geral do arquivo, analise o código e identifique as funções,
+    classes e estruturas principais, descrevendo seu papel e como se relacionam entre si.
+  expected_output: >
+    Lista em bullet points contendo nomes de funções, classes e estruturas,
+    acompanhadas de uma breve explicação sobre sua funcionalidade e interações.
+  agent: code_insight_agent
+
+generate_doc_task_raw_link:
+  description: >
+    Usando o resumo geral e os insights extraídos, escreva a documentação técnica completa
+    do arquivo. Descreva seu propósito, suas classes e funções principais, e como
+    esses elementos compõem o funcionamento do código.
+  expected_output: >
+    Documentação técnica detalhada do arquivo, com explicações claras e técnicas.
+  agent: doc_writer
+
+markdown_format_task_raw_link:
+  description: >
+    Formate a documentação técnica em Markdown, organizando o conteúdo em seções claras.
+    Use títulos, listas e blocos de código para facilitar a leitura e navegação.
+  expected_output: >
+    A documentação técnica formatada em Markdown de forma legível e organizada.
   agent: markdown_formatter

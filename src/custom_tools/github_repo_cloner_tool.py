@@ -21,7 +21,13 @@ class GitHubRepoClonerTool(BaseTool):
             if os.path.exists(clone_dir):
                 shutil.rmtree(clone_dir, onerror=self._on_rm_error)
 
-            subprocess.run(["git", "clone", "--branch", branch, repo_url, clone_dir], check=True)
+            # Escolhe o comando com ou sem --single-branch
+            if branch == "main":
+                cmd = ["git", "clone", "--branch", branch, repo_url, clone_dir]
+            else:
+                cmd = ["git", "clone", "--branch", branch, "--single-branch", repo_url, clone_dir]
+
+            subprocess.run(cmd, check=True)
             return f"✅ Repositório clonado com sucesso em '{clone_dir}' (branch: {branch})."
 
         except subprocess.CalledProcessError as e:

@@ -10,7 +10,7 @@ class FilteredDirectoryReaderTool(BaseTool):
         init=False
     )
 
-    def _run(self, clone_dir: str, output_file: str = "true_paths.txt") -> str:
+    def _run(self, clone_dir: str, output_file: str = "list_of_files.txt") -> str:
         if not os.path.isdir(clone_dir):
             return f"❌ Diretório '{clone_dir}' não encontrado."
 

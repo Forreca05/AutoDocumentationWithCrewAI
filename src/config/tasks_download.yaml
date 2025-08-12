@@ -32,4 +32,11 @@ read_file_contents_task:
     Nenhum conteúdo deve ser inventado ou modificado — apenas leitura e escrita fiel dos ficheiros reais.
   agent: file_content_reader
 
+code_splitter_task:
+  description: >
+    Processar o arquivo {final_result} contendo múltiplos blocos de código, unindo-os em um único arquivo {final_text},
+    removendo emojis e ajustando a extensão de acordo com a linguagem detectada.
+  expected_output: >
+    Arquivo único consolidado com o código limpo e pronto para análise.
+  agent: code_splitter_agent
 

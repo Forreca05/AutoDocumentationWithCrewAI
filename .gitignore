@@ -17,6 +17,7 @@ notes
 requests_repo
 list_of_files.txt
 final.py
+code_output.txt
 
 # Checkpoints Jupyter
 .ipynb_checkpoints/

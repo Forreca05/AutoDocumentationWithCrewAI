@@ -1,4 +1,6 @@
 import sys
+sys.stdin.reconfigure(encoding="utf-8")
+sys.stdout.reconfigure(encoding="utf-8")
 from src.crew import DownloadAndExtractCrew, DocumentationCrew
 from urllib.parse import urlparse
 
@@ -21,7 +23,6 @@ def main(method=None, inputs=None):
             inputs = {
                 "url": url,
                 "output_path": output_path,
-                "final_result": output_path
             }
         elif choice == "2":
             repo_url = input("\n📎 Cola o link do repositório GitHub: ").strip()
@@ -33,7 +34,8 @@ def main(method=None, inputs=None):
                 "branch": branch,
                 "output_file": "list_of_files.txt",
                 "list_file_path": "list_of_files.txt",
-                "final_result": "final.py"
+                "final_result": "final.py",
+                "final_text" : "code_output.txt"
             }
         else:
             print("\n❌ Opção inválida. Usa 1 ou 2.")
@@ -44,21 +46,14 @@ def main(method=None, inputs=None):
     pre_crew.kickoff(inputs=inputs)
 
     # 2️⃣ Segunda etapa: leitura e documentação
-    doc_crew = DocumentationCrew().crew()
-    doc_crew.kickoff()
+    doc_crew = DocumentationCrew(method=method).crew()
+    doc_crew.kickoff(inputs=inputs)
 
 
 if __name__ == "__main__":
     if len(sys.argv) > 2:
         method = sys.argv[1]
-        if method == "raw_link":
-            url = sys.argv[2]
-            inputs = {
-                "url": url,
-                "output_path": extract_output_path(url),
-                "final_result": extract_output_path(url)
-            }
-        elif method == "clone_repo":
+        if method == "clone_repo":
             repo_url = sys.argv[2]
             branch = sys.argv[3] if len(sys.argv) > 3 else "main"
             inputs = {

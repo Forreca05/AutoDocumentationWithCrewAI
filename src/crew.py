@@ -7,7 +7,8 @@ from .custom_tools.github_downloader_tool import GitHubDownloaderTool
 from .custom_tools.github_repo_cloner_tool import GitHubRepoClonerTool
 from .custom_tools.filtered_directory_reader_tool import FilteredDirectoryReaderTool
 from .custom_tools.read_file_tool import ReadFileTool
-from .custom_tools.read_final_code_tool import ReadFinalCodeTool
+from .custom_tools.read_final_code_tool import SafeReadFileTool
+from .custom_tools.split_and_save_tool import CodeSplitterTool
 
 # Configuração do modelo de linguagem
 my_llm = LLM(
@@ -15,8 +16,6 @@ my_llm = LLM(
     base_url="http://127.0.0.1:1234/v1",
     api_key="not-needed"
 )
-
-code_reader_tool = FileReadTool(file_path="final.py", line_count=None, encoding="utf-8")
 
 # ----------------------------------------------------------
 # CREW 1: Download e agregação de conteúdo
@@ -68,6 +67,16 @@ class DownloadAndExtractCrew:
             verbose=True,
             allow_delegation=False
         )
+    
+    @agent
+    def code_splitter_agent(self):
+        return Agent(
+            config=self.agents_config["code_splitter_agent"],
+            tools=[CodeSplitterTool()],
+            llm=my_llm,
+            verbose=True,
+            allow_delegation=False
+        )
 
     @task
     def download_github_file_task(self):
@@ -84,28 +93,32 @@ class DownloadAndExtractCrew:
     @task
     def read_file_contents_task(self):
         return Task(config=self.tasks_config["read_file_contents_task"])
+    
+    @task
+    def code_splitter_task(self):
+        return Task(config=self.tasks_config["code_splitter_task"])
 
     @crew
     def crew(self):
         if self.method == "raw_link":
             agents = [
                 self.github_file_downloader(),
-                self.file_content_reader()
             ]
             tasks = [
                 self.download_github_file_task(),
-                self.read_file_contents_task()
             ]
         elif self.method == "clone_repo":
             agents = [
                 self.repo_cloner(),
                 self.file_lister(),
-                self.file_content_reader()
+                self.file_content_reader(),
+                self.code_splitter_agent()
             ]
             tasks = [
                 self.clone_repo_task(),
                 self.list_files_task(),
-                self.read_file_contents_task()
+                self.read_file_contents_task(),
+                self.code_splitter_task()
             ]
         else:
             raise ValueError("Método inválido. Use 'raw_link' ou 'clone_repo'.")
@@ -125,8 +138,25 @@ class DocumentationCrew:
     agents_config = "config/agents_document.yaml"
     tasks_config = "config/tasks_document.yaml"
 
+    def __init__(self, method: str):
+        self.method = method  # "raw_link" ou "clone_repo"
+
     @agent
-    def code_reader(self):
+    def raw_code_reader(self, output_path=None):
+        file_path = output_path
+        code_reader_tool_dynamic = FileReadTool(file_path=file_path, line_count=None)
+        return Agent(
+            config=self.agents_config["raw_code_reader"],
+            tools=[code_reader_tool_dynamic],
+            llm=my_llm,
+            verbose=True,
+            allow_delegation=False
+        )
+
+    @agent
+    def code_reader(self, final_text=None):
+        file_path = final_text
+        code_reader_tool = FileReadTool(file_path=file_path, line_count= 0)
         return Agent(
             config=self.agents_config["code_reader"],
             tools=[code_reader_tool],
@@ -137,8 +167,9 @@ class DocumentationCrew:
 
     @agent
     def code_insight_agent(self):
+        key = "raw_code_insight_agent" if self.method == "raw_link" else "code_insight_agent"
         return Agent(
-            config=self.agents_config["code_insight_agent"],
+            config=self.agents_config[key],
             llm=my_llm,
             verbose=True,
             allow_delegation=False
@@ -146,8 +177,9 @@ class DocumentationCrew:
 
     @agent
     def doc_writer(self):
+        key = "raw_doc_writer" if self.method == "raw_link" else "doc_writer"
         return Agent(
-            config=self.agents_config["doc_writer"],
+            config=self.agents_config[key],
             llm=my_llm,
             verbose=True,
             allow_delegation=False
@@ -155,47 +187,70 @@ class DocumentationCrew:
 
     @agent
     def markdown_formatter(self):
+        key = "raw_markdown_formatter" if self.method == "raw_link" else "markdown_formatter"
         return Agent(
-            config=self.agents_config["markdown_formatter"],
+            config=self.agents_config[key],
             llm=my_llm,
             verbose=True,
             allow_delegation=False
         )
-
+    
+    @task
+    def read_code_task_raw_link(self):
+        return Task(config=self.tasks_config["read_code_task_raw_link"])
+    
     @task
     def read_code_task(self):
         return Task(config=self.tasks_config["read_code_task"])
 
     @task
     def extract_insights_task(self):
-        return Task(config=self.tasks_config["extract_insights_task"])
+        key = "extract_insights_task_raw_link" if self.method == "raw_link" else "extract_insights_task"
+        return Task(config=self.tasks_config[key])
 
     @task
     def generate_doc_task(self):
-        return Task(config=self.tasks_config["generate_doc_task"])
+        key = "generate_doc_task_raw_link" if self.method == "raw_link" else "generate_doc_task"
+        return Task(config=self.tasks_config[key])
 
     @task
     def markdown_format_task(self):
+        key = "markdown_format_task_raw_link" if self.method == "raw_link" else "markdown_format_task"
         return Task(
-            config=self.tasks_config["markdown_format_task"],
+            config=self.tasks_config[key],
             output_file="documentacao_final.md"
         )
 
     @crew
     def crew(self):
-        agents = [
-            self.code_reader(),
-            self.code_insight_agent(),
-            self.doc_writer(),
-            self.markdown_formatter()
-        ]
+        if self.method == "raw_link":
+            agents = [
+                self.raw_code_reader(),
+                self.code_insight_agent(),
+                self.doc_writer(),
+                self.markdown_formatter()
+            ]
 
-        tasks = [
-            self.read_code_task(),
-            self.extract_insights_task(),
-            self.generate_doc_task(),
-            self.markdown_format_task()
-        ]
+            tasks = [
+                self.read_code_task_raw_link(),
+                self.extract_insights_task(),
+                self.generate_doc_task(),
+                self.markdown_format_task()
+            ]
+        elif self.method == "clone_repo":
+            agents = [
+                self.code_reader(),
+                self.code_insight_agent(),
+                self.doc_writer(),
+                self.markdown_formatter()
+            ]
+
+            tasks = [
+                self.read_code_task(),
+                self.extract_insights_task(),
+                self.generate_doc_task(),
+                self.markdown_format_task()
+            ]
 
         return Crew(
             agents=agents,
