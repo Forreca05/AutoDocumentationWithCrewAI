@@ -19,7 +19,7 @@ list_files_task:
     Retorna os ficheiros listados em {output_file}.
   agent: file_lister
 
-read_file_contents_task:
+code_exporter_task:
   description: >
     Ler o ficheiro {list_file_path}, que contém caminhos para ficheiros de código (um por linha).
     Para cada caminho listado:
@@ -30,13 +30,13 @@ read_file_contents_task:
     O arquivo {final_result}, contendo a concatenação de todos os ficheiros listados,
     com divisões claras usando comentários válidos (ex: "# Arquivo: ...").
     Nenhum conteúdo deve ser inventado ou modificado — apenas leitura e escrita fiel dos ficheiros reais.
-  agent: file_content_reader
+  agent: code_exporter
 
-code_splitter_task:
+cleaner_task:
   description: >
     Processar o arquivo {final_result} contendo múltiplos blocos de código, unindo-os em um único arquivo {final_text},
     removendo emojis e ajustando a extensão de acordo com a linguagem detectada.
   expected_output: >
     Arquivo único consolidado com o código limpo e pronto para análise.
-  agent: code_splitter_agent
+  agent: cleaner
 

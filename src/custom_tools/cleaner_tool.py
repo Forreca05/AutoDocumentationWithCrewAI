@@ -5,7 +5,7 @@ from crewai.tools import BaseTool
 from pydantic import Field
 from typing import ClassVar, Dict, List
 
-class CodeSplitterTool(BaseTool):
+class CleanerTool(BaseTool):
     LANG_KEYWORDS: ClassVar[Dict[str, List[str]]] = {
         "py": ["def ", "import ", "class "],
         "cpp": ["#include", "std::", "int main"],
@@ -14,7 +14,7 @@ class CodeSplitterTool(BaseTool):
         "c": ["#include", "int main", "printf"],
     }
 
-    name: str = Field("Code Splitter Tool", init=False)
+    name: str = Field("Cleaner Tool", init=False)
     description: str = Field("Une todos os blocos num ficheiro só, limpa emojis e corrige extensão.", init=False)
 
     def detect_language(self, content: str, fallback="txt") -> str:

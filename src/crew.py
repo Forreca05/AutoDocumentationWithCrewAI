@@ -6,9 +6,8 @@ from crewai_tools import FileReadTool, DirectoryReadTool
 from .custom_tools.github_downloader_tool import GitHubDownloaderTool
 from .custom_tools.github_repo_cloner_tool import GitHubRepoClonerTool
 from .custom_tools.filtered_directory_reader_tool import FilteredDirectoryReaderTool
-from .custom_tools.read_file_tool import ReadFileTool
-from .custom_tools.read_final_code_tool import SafeReadFileTool
-from .custom_tools.split_and_save_tool import CodeSplitterTool
+from .custom_tools.export_code_to_file_tool import ExportCodeToFileTool
+from .custom_tools.cleaner_tool import CleanerTool
 
 # Configuração do modelo de linguagem
 download_llm = LLM(
@@ -65,20 +64,20 @@ class DownloadAndExtractCrew:
         )
 
     @agent
-    def file_content_reader(self):
+    def code_exporter(self):
         return Agent(
-            config=self.agents_config["file_content_reader"],
-            tools=[ReadFileTool()],
+            config=self.agents_config["code_exporter"],
+            tools=[ExportCodeToFileTool()],
             llm=download_llm,
             verbose=True,
             allow_delegation=False
         )
     
     @agent
-    def code_splitter_agent(self):
+    def cleaner(self):
         return Agent(
-            config=self.agents_config["code_splitter_agent"],
-            tools=[CodeSplitterTool()],
+            config=self.agents_config["cleaner"],
+            tools=[CleanerTool()],
             llm=download_llm,
             verbose=True,
             allow_delegation=False
@@ -97,12 +96,12 @@ class DownloadAndExtractCrew:
         return Task(config=self.tasks_config["list_files_task"])
 
     @task
-    def read_file_contents_task(self):
-        return Task(config=self.tasks_config["read_file_contents_task"])
+    def code_exporter_task(self):
+        return Task(config=self.tasks_config["code_exporter_task"])
     
     @task
-    def code_splitter_task(self):
-        return Task(config=self.tasks_config["code_splitter_task"])
+    def cleaner_task(self):
+        return Task(config=self.tasks_config["cleaner_task"])
 
     @crew
     def crew(self):
@@ -117,14 +116,14 @@ class DownloadAndExtractCrew:
             agents = [
                 self.repo_cloner(),
                 self.file_lister(),
-                self.file_content_reader(),
-                self.code_splitter_agent()
+                self.code_exporter(),
+                self.cleaner()
             ]
             tasks = [
                 self.clone_repo_task(),
                 self.list_files_task(),
-                self.read_file_contents_task(),
-                self.code_splitter_task()
+                self.code_exporter_task(),
+                self.cleaner_task()
             ]
         else:
             raise ValueError("Método inválido. Use 'raw_link' ou 'clone_repo'.")

@@ -1,3 +1,4 @@
+import os
 import sys
 sys.stdin.reconfigure(encoding="utf-8")
 sys.stdout.reconfigure(encoding="utf-8")
@@ -7,6 +8,26 @@ from urllib.parse import urlparse
 def extract_output_path(url):
     path = urlparse(url).path
     return "downloads" + path[path.rfind("/"):]
+
+def get_repo_name(repo_url: str) -> str:
+    path = urlparse(repo_url).path
+    parts = path.strip("/").split("/")
+    
+    if len(parts) >= 2:
+        repo_name = parts[1] 
+    else:
+        repo_name = os.path.basename(path)
+
+    return repo_name.replace(".git", "")
+
+def normalize_github_url(repo_url: str) -> str:
+    parsed = urlparse(repo_url)
+    path_parts = parsed.path.strip("/").split("/")
+
+    if len(path_parts) >= 2:
+        normalized_path = "/".join(path_parts[:2]) + ".git"
+        return f"{parsed.scheme}://{parsed.netloc}/{normalized_path}"
+    return repo_url
 
 def main(method=None, inputs=None):
     if method is None or inputs is None:
@@ -18,19 +39,18 @@ def main(method=None, inputs=None):
 
         if choice == "1":
             url = input("\n📎 Cola o link RAW do GitHub: ").strip()
-            output_path = extract_output_path(url)
             method = "raw_link"
             inputs = {
                 "url": url,
-                "output_path": output_path,
+                "output_path": extract_output_path(url),
             }
         elif choice == "2":
             repo_url = input("\n📎 Cola o link do repositório GitHub: ").strip()
             branch = (input("🌿 Nome da branch (default: main): ") or "").strip() or "main"
             method = "clone_repo"
             inputs = {
-                "repo_url": repo_url,
-                "clone_dir": "requests_repo",
+                "repo_url": normalize_github_url(repo_url),
+                "clone_dir": get_repo_name(repo_url),
                 "branch": branch,
                 "output_file": "list_of_files.txt",
                 "list_file_path": "list_of_files.txt",
@@ -57,8 +77,8 @@ if __name__ == "__main__":
             repo_url = sys.argv[2]
             branch = sys.argv[3] if len(sys.argv) > 3 else "main"
             inputs = {
-                "repo_url": repo_url,
-                "clone_dir": "requests_repo",
+                "repo_url": normalize_github_url(repo_url),
+                "clone_dir": get_repo_name(repo_url),
                 "branch": branch,
                 "output_file": "list_of_files.txt",
                 "list_file_path": "list_of_files.txt",

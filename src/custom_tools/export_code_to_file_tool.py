@@ -2,8 +2,8 @@ import os
 from crewai.tools import BaseTool
 from pydantic import Field
 
-class ReadFileTool(BaseTool):
-    name: str = Field("ReadFileTool", init=False)
+class ExportCodeToFileTool(BaseTool):
+    name: str = Field("ExportCodeToFileTool", init=False)
     description: str = Field(
         "Lê os ficheiros listados no ficheiro list_of_files.txt, retorna seu conteúdo e salva tudo em {final_result}.",
         init=False
