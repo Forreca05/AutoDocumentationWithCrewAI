@@ -1,42 +1,41 @@
 download_github_file_task:
   description: >
-    Baixe um único arquivo de código diretamente do link RAW do GitHub.
+    Download a single code file directly from the GitHub RAW link.
   expected_output: >
-    O arquivo salvo em {output_path}.
+    The file saved at {output_path}.
   agent: github_file_downloader
 
 clone_repo_task:
   description: >
-    Clonar o repositório do GitHub para o diretório local.
+    Clone the GitHub repository to the local directory.
   expected_output: >
-    O repositório clonado no diretório {clone_dir}.
+    The repository cloned into the {clone_dir} directory.
   agent: repo_cloner
 
 list_files_task:
   description: >
-    Listar ficheiros do repositório clonado.
+    List files from the cloned repository.
   expected_output: >
-    Retorna os ficheiros listados em {output_file}.
+    Returns the listed files in {output_file}.
   agent: file_lister
 
 code_exporter_task:
   description: >
-    Ler o ficheiro {list_file_path}, que contém caminhos para ficheiros de código (um por linha).
-    Para cada caminho listado:
-      - Ler o conteúdo do ficheiro correspondente.
-      - Adicionar um cabeçalho de comentário com o nome do ficheiro, no formato "# Arquivo: caminho/arquivo.py".
-    Combinar tudo em sequência, e salvar no arquivo {final_result}.
+    Read the file {list_file_path}, which contains paths to code files (one per line).
+    For each listed path:
+      - Read the content of the corresponding file.
+      - Add a comment header with the file name, in the format "# File: path/file.py".
+    Combine everything in sequence and save it to {final_result}.
   expected_output: >
-    O arquivo {final_result}, contendo a concatenação de todos os ficheiros listados,
-    com divisões claras usando comentários válidos (ex: "# Arquivo: ...").
-    Nenhum conteúdo deve ser inventado ou modificado — apenas leitura e escrita fiel dos ficheiros reais.
+    The file {final_result}, containing the concatenation of all listed files,
+    with clear separation using valid comments (e.g., "# File: ...").
+    No content should be invented or modified — only faithful reading and writing of actual files.
   agent: code_exporter
 
 cleaner_task:
   description: >
-    Processar o arquivo {final_result} contendo múltiplos blocos de código, unindo-os em um único arquivo {final_text},
-    removendo emojis e ajustando a extensão de acordo com a linguagem detectada.
+    Process the {final_result} file containing multiple code blocks, merging them into a single file {final_text},
+    removing emojis, and adjusting the extension according to the detected language.
   expected_output: >
-    Arquivo único consolidado com o código limpo e pronto para análise.
+    A consolidated single file with clean code, ready for analysis.
   agent: cleaner
-
