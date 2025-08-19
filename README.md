@@ -154,6 +154,20 @@ Como o projeto depende de modelos locais via LM Studio, o desempenho varia confo
 
 ---
 
+## 🔑 Experiência com OpenAI API
+
+No final do estágio pude integrar o projeto com a **OpenAI API**, utilizando uma chave própria.  
+A diferença entre rodar o sistema apenas com modelos locais (LM Studio) e com a API foi **absurda**:
+
+* 🚀 **Velocidade** — enquanto os modelos locais demoravam minutos (às vezes travavam ou falhavam), a versão com OpenAI executava em cerca de **30 segundos**.  
+* 📄 **Qualidade da documentação** — a saída deixou de ter erros, incompletudes e “alucinações”; o documento gerado era **coerente e fiel ao código**.  
+* 🔁 **Confiabilidade** — cada execução produzia resultados estáveis, sem a inconsistência típica do ambiente local.  
+
+Essa mudança mostrou de forma clara que o uso de uma API externa como a da OpenAI não é apenas uma melhoria incremental:  
+foi um **salto de qualidade e eficiência** que transformou totalmente a experiência do projeto.
+
+---
+
 ## 📌 Nota
 
 Este trabalho foi desenvolvido no âmbito do **Estágio de Verão — Summer Opportunities 2025**, realizado na **Consulteer** durante os meses de **julho e agosto**.  
