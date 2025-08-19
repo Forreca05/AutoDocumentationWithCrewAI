@@ -1,6 +1,9 @@
 from crewai import Agent, Crew, Task, Process, LLM
 from crewai.project import CrewBase, agent, task, crew
 
+import os
+from dotenv import load_dotenv
+
 # Tools personalizadas
 from crewai_tools import FileReadTool, DirectoryReadTool
 from .custom_tools.github_downloader_tool import GitHubDownloaderTool
@@ -9,18 +12,34 @@ from .custom_tools.filtered_directory_reader_tool import FilteredDirectoryReader
 from .custom_tools.export_code_to_file_tool import ExportCodeToFileTool
 from .custom_tools.cleaner_tool import CleanerTool
 
-# Configuração do modelo de linguagem
+# Configuração do modelo de linguagem com LM Studio
+#download_llm = LLM(
+#    model="lm_studio/google/gemma-3n-e4b",
+#    base_url="http://127.0.0.1:1234/v1",
+#    api_key="not-needed"
+#)
+
+#document_llm = LLM(
+#    model="lm_studio/google_gemma-3n-e4b-it",
+#    base_url="http://127.0.0.1:1234/v1",
+#    api_key="not-needed"
+#)
+
+# Configuração do modelo de linguagem com Open API Key
+
+# Carregar variáveis do .env
+load_dotenv()
+
 download_llm = LLM(
-    model="lm_studio/google/gemma-3n-e4b",
-    base_url="http://127.0.0.1:1234/v1",
-    api_key="not-needed"
+    model="gpt-4.1-mini", 
+    api_key=os.getenv("OPENAI_API_KEY")
 )
 
 document_llm = LLM(
-    model="lm_studio/google_gemma-3n-e4b-it",
-    base_url="http://127.0.0.1:1234/v1",
-    api_key="not-needed"
+    model="gpt-4.1-mini", 
+    api_key=os.getenv("OPENAI_API_KEY")
 )
+
 
 # ----------------------------------------------------------
 # CREW 1: Download e agregação de conteúdo
@@ -149,7 +168,7 @@ class DocumentationCrew:
     @agent
     def raw_code_reader(self, output_path=None):
         file_path = output_path
-        code_reader_tool_dynamic = FileReadTool(file_path=file_path, line_count=None)
+        code_reader_tool_dynamic = FileReadTool(file_path=file_path)
         return Agent(
             config=self.agents_config["raw_code_reader"],
             tools=[code_reader_tool_dynamic],
@@ -161,7 +180,7 @@ class DocumentationCrew:
     @agent
     def code_reader(self, final_text=None):
         file_path = final_text
-        code_reader_tool = FileReadTool(file_path=file_path, line_count= 0)
+        code_reader_tool = FileReadTool(file_path=file_path)
         return Agent(
             config=self.agents_config["code_reader"],
             tools=[code_reader_tool],
