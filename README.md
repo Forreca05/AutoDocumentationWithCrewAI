@@ -1,45 +1,45 @@
 # 🧠 AutoDocumentationWithCrewAI
 
-Documentação automática de código utilizando a framework [CrewAI](https://github.com/joaomdmoura/crewAI).
+Automatic code documentation using the [CrewAI](https://github.com/joaomdmoura/crewAI) framework.
 
-Este projeto organiza **agentes colaborativos** para analisar e documentar código Python de forma autônoma. Ele combina ferramentas de leitura de arquivos, análise semântica e geração de texto, criando uma pipeline de documentação estruturada e escalável.
-
----
-
-## 🚀 Funcionalidades
-
-* 📄 Leitura de arquivos fonte (ex.: `.py`)
-* 🧠 Análise da estrutura e lógica do código
-* ✍️ Geração automática de documentação em linguagem natural
-* 🤖 Execução encadeada de agentes (Leitor → Analista → Documentador → Formatter)
-* 🔄 Integração com GitHub via **webhook** para automação em *push* ou *pull request*
-* 🌐 Exposição local com **ngrok** para receber webhooks externamente
+This project organizes **collaborative agents** to autonomously analyze and document Python code. It combines tools for file reading, semantic analysis, and text generation, creating a structured and scalable documentation pipeline.
 
 ---
 
-## 🛠️ Requisitos
+## 🚀 Features
+
+* 📄 Reads source files (e.g., `.py`)
+* 🧠 Analyzes code structure and logic
+* ✍️ Automatically generates natural language documentation
+* 🤖 Chained execution of agents (Reader → Analyst → Documenter → Formatter)
+* 🔄 GitHub integration via **webhook** for automation on *push* or *pull request*
+* 🌐 Local exposure with **ngrok** to receive external webhooks
+
+---
+
+## 🛠️ Requirements
 
 * Python **3.11+**
 * [CrewAI](https://github.com/joaomdmoura/crewAI)
-* Ambiente virtual recomendado (**venv**)
-* [ngrok](https://ngrok.com/) para testes locais de webhook (opcional)
+* Virtual environment recommended (**venv**)
+* [ngrok](https://ngrok.com/) for local webhook testing (optional)
 
 ---
 
-## 🧠 Modelos de Linguagem
+## 🧠 Language Models
 
-O projeto utiliza modelos locais através do [LM Studio](https://lmstudio.ai/).  
-Isso permite processar e gerar documentação **offline**, garantindo:
+The project uses local models through [LM Studio](https://lmstudio.ai/).  
+This allows processing and documentation generation **offline**, ensuring:
 
-* Maior controle sobre execução
-* Privacidade dos dados
-* Independência de API externa (não é necessária API key)
+* Greater execution control
+* Data privacy
+* Independence from external APIs (no API key required)
 
 ---
 
-## ⚙️ Instalação e uso
+## ⚙️ Installation and Usage
 
-### 1. Criar e ativar o ambiente virtual
+### 1. Create and activate the virtual environment
 
 ```bash
 py -3.11 -m venv .venv
@@ -47,129 +47,129 @@ py -3.11 -m venv .venv
 source .venv/bin/activate # Linux/macOS
 ```
 
-### 2. Instalar dependências
+### 2. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Executar o servidor de webhook (Flask)
+### 3. Run the webhook server (Flask)
 
 ```bash
 py webhook_server.py
 ```
 
-O servidor ficará disponível em `http://localhost:5000/webhook`.
+The server will be available at `http://localhost:5000/webhook`.
 
-### 4. Expor localmente com ngrok
+### 4. Expose locally with ngrok
 
 ```bash
 ngrok http 5000
 ```
 
-* Copie a URL pública (ex.: `https://abcd1234.ngrok.io`)  
-* Configure-a como **Webhook** no GitHub (`https://abcd1234.ngrok.io/webhook`)
+* Copy the public URL (e.g., `https://abcd1234.ngrok.io`)  
+* Configure it as **Webhook** in GitHub (`https://abcd1234.ngrok.io/webhook`)
 
-### 5. Configurar Webhook no GitHub
+### 5. Configure Webhook in GitHub
 
-1. Vá em **Settings → Webhooks** no repositório  
-2. Clique em **Add webhook**  
-3. Cole a URL do ngrok com `/webhook`  
-4. Escolha `application/json`  
-5. Selecione os eventos desejados (ex.: *push*)  
-6. Salve
+1. Go to **Settings → Webhooks** in the repository  
+2. Click **Add webhook**  
+3. Paste the ngrok URL with `/webhook`  
+4. Choose `application/json`  
+5. Select desired events (e.g., *push*)  
+6. Save
 
-### 6. O que acontece quando o webhook dispara?
+### 6. What happens when the webhook is triggered?
 
-* GitHub envia um POST → servidor Flask  
-* O servidor extrai o repositório e dispara `main.py` em *background*  
-* A pipeline roda: leitura de código → análise → documentação → formatação
+* GitHub sends a POST → Flask server  
+* The server extracts the repository and triggers `main.py` in the background  
+* The pipeline runs: code reading → analysis → documentation → formatting
 
-### 7. Execução manual (sem webhook)
+### 7. Manual execution (without webhook)
 
 ```bash
 py main.py
 ```
 
-Modos suportados:
+Supported modes:
 
-1. **Arquivo único (raw link GitHub)**  
-   * Informe a URL *raw* de um arquivo  
-   * O sistema gera documentação técnica para esse arquivo
+1. **Single file (raw GitHub link)**  
+   * Provide the *raw* URL of a file  
+   * The system generates technical documentation for that file
 
-2. **Repositório completo (clone)**  
-   * Informe a URL do repositório, ex.: `https://github.com/usuario/repositorio`  
-   * Escolha a *branch*  
-   * O sistema clona, processa os arquivos e gera documentação do projeto completo
-
----
-
-## 📁 Estrutura do Projeto
-
-* `main.py` — Script principal de documentação  
-* `webhook_server.py` — Servidor Flask para integração com GitHub  
-* `src/crew.py` — Inicializa e orquestra os agentes do CrewAI  
-* `src/custom_tools/` — Ferramentas customizadas (clonagem, download, parsing)  
-* `src/config/` — Arquivos YAML com configs de agentes e tarefas  
+2. **Complete repository (clone)**  
+   * Provide the repository URL, e.g., `https://github.com/user/repository`  
+   * Choose the branch  
+   * The system clones, processes files, and generates documentation for the entire project
 
 ---
 
-## ❗ Limitações conhecidas
+## 📁 Project Structure
 
-Como o projeto depende de modelos locais via LM Studio, o desempenho varia conforme hardware e contexto. Algumas limitações:
-
-* 🔁 **Instabilidade** — pipeline pode alternar entre execuções corretas e falhas  
-* 📄 **Documentação incorreta ou inventada** — outputs para arquivos inexistentes ou ignorando ferramentas  
-* 🧠 **Alucinações** — aumentam com complexidade e limite de tokens  
-* ❌ **Ignorar instruções de tools** — por ex., não seguir listas de arquivos fornecidas  
-* ✍️ **Documentação inline inconsistente** — dificuldade em gerar docstrings confiáveis  
-* 💥 **Crashes em modelos grandes** — consumo elevado de memória/contexto  
-* ⏳ **Tempo de execução elevado** — especialmente durante a execução da DocumentationCrew  
-* 📂 **Limitação de leitura de arquivos** — FileReadTool lê um arquivo por vez e requer caminho exato; para contornar, os arquivos eram concatenados num único arquivo identificado. Funciona para repositórios pequenos, mas grandes podem falhar ou consumir muita memória
+* `main.py` — Main documentation script  
+* `webhook_server.py` — Flask server for GitHub integration  
+* `src/crew.py` — Initializes and orchestrates CrewAI agents  
+* `src/custom_tools/` — Custom tools (cloning, downloading, parsing)  
+* `src/config/` — YAML configuration files for agents and tasks  
 
 ---
 
-## 🔮 Possíveis Implementações Futuras
+## ❗ Known Limitations
 
-1️⃣ **Suporte a repositórios maiores**  
-* Processamento em chunks de arquivos ou pacotes de diretórios  
-* Uso de arquivo índice para iterar sobre caminhos e ler arquivos separadamente  
-* MultiFileReadTool para leitura estruturada de múltiplos arquivos
+Since the project depends on local models via LM Studio, performance varies according to hardware and context. Some limitations include:
 
-2️⃣ **Modelos mais avançados**  
-* Integração com modelos maiores ou mais recentes  
-* Resumos intermediários para gerenciar limites de tokens em repositórios extensos
-
-3️⃣ **Documentação inline e completa**  
-* Geração de docstrings faltantes  
-* Atualização de docstrings existentes para refletir alterações do código
-
-4️⃣ **Maior autonomia dos agentes**  
-* Agentes menos dependentes de tools específicas  
-* Encadeamento dinâmico com feedback entre agentes para corrigir inconsistências
-
-5️⃣ **Processamento incremental e resumido**  
-* Processar arquivos em etapas  
-* Combinar resumos intermediários para reduzir consumo de memória e melhorar robustez
+* 🔁 **Instability** — pipeline may alternate between correct runs and failures  
+* 📄 **Incorrect or fabricated documentation** — outputs for non-existent files or ignoring tools  
+* 🧠 **Hallucinations** — increase with complexity and token limits  
+* ❌ **Ignoring tool instructions** — e.g., not following provided file lists  
+* ✍️ **Inconsistent inline documentation** — difficulty generating reliable docstrings  
+* 💥 **Crashes with large models** — high memory/context consumption  
+* ⏳ **Long execution time** — especially during DocumentationCrew execution  
+* 📂 **File reading limitation** — FileReadTool reads one file at a time and requires exact path; workaround was concatenating files into a single file. Works for small repos, but large ones may fail or consume too much memory
 
 ---
 
-## 🔑 Experiência com OpenAI API
+## 🔮 Possible Future Implementations
 
-No final do estágio pude integrar o projeto com a **OpenAI API**, utilizando uma chave própria.  
-A diferença entre rodar o sistema apenas com modelos locais (LM Studio) e com a API foi **absurda**:
+1️⃣ **Support for larger repositories**  
+* Processing in chunks of files or directory packages  
+* Use of index file to iterate over paths and read files separately  
+* MultiFileReadTool for structured multi-file reading
 
-* 🚀 **Velocidade** — enquanto os modelos locais demoravam minutos (às vezes travavam ou falhavam), a versão com OpenAI executava em cerca de **30 segundos**.  
-* 📄 **Qualidade da documentação** — a saída deixou de ter erros, incompletudes e “alucinações”; o documento gerado era **coerente e fiel ao código**.  
-* 🔁 **Confiabilidade** — cada execução produzia resultados estáveis, sem a inconsistência típica do ambiente local.  
+2️⃣ **More advanced models**  
+* Integration with larger or more recent models  
+* Intermediate summaries to handle token limits in large repositories
 
-Essa mudança mostrou de forma clara que o uso de uma API externa como a da OpenAI não é apenas uma melhoria incremental:  
-foi um **salto de qualidade e eficiência** que transformou totalmente a experiência do projeto.
+3️⃣ **Inline and complete documentation**  
+* Generation of missing docstrings  
+* Updating existing docstrings to reflect code changes
+
+4️⃣ **Greater agent autonomy**  
+* Less dependence on specific tools  
+* Dynamic chaining with feedback between agents to fix inconsistencies
+
+5️⃣ **Incremental and summarized processing**  
+* Process files in stages  
+* Combine intermediate summaries to reduce memory usage and improve robustness
 
 ---
 
-## 📌 Nota
+## 🔑 Experience with OpenAI API
 
-Este trabalho foi desenvolvido no âmbito do **Estágio de Verão — Summer Opportunities 2025**, realizado na **Consulteer** durante os meses de **julho e agosto**.  
+At the end of the internship, I was able to integrate the project with the **OpenAI API**, using a personal key.  
+The difference between running the system only with local models (LM Studio) and with the API was **huge**:
 
-Além do código, este repositório inclui também um arquivo PDF com a minha **review detalhada da ferramenta utilizada** (CrewAI).
+* 🚀 **Speed** — while local models took minutes (sometimes froze or failed), the OpenAI version executed in about **30 seconds**.  
+* 📄 **Documentation quality** — outputs no longer had errors, omissions, or hallucinations; the generated document was **coherent and faithful to the code**.  
+* 🔁 **Reliability** — each execution produced stable results, unlike the typical inconsistency of the local environment.  
+
+This change made it clear that using an external API like OpenAI’s was not just an incremental improvement:  
+it was a **leap in quality and efficiency** that completely transformed the project experience.
+
+---
+
+## 📌 Note
+
+This work was developed within the scope of the **Summer Internship — Summer Opportunities 2025**, carried out at **Consulteer** during the months of **July and August**.  
+
+In addition to the code, this repository also includes a PDF file with my **detailed review of the tool used** (CrewAI).
